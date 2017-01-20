@@ -20,6 +20,7 @@ const imageUrl = "https://photo.tuchong.com/267872/f/15361536.jpg";
 
 export default class tuchong extends Component {
   constructor(props) {
+    super(props);
     bimagePool = {
       "landscape": [],
       "protrait": [],
@@ -48,7 +49,7 @@ export default class tuchong extends Component {
 
 class Landscape extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:500}}/> 
   }
 }
 class Protrait extends Component{
