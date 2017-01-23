@@ -9,7 +9,7 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View, 
+  View,
   Image
 } from 'react-native';
 
@@ -30,8 +30,8 @@ export default class tuchong extends Component {
       "architecture": [],
       "city": [],
     };     //max length = 100 for each tag
-  } 
-  
+  }
+
   render() {
     return (
       <ScrollableTabView renderTabBar={() => <ScrollableTabBar/>}>
@@ -49,42 +49,42 @@ export default class tuchong extends Component {
 
 class Landscape extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:500}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:500}}/>
   }
 }
 class Protrait extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/>
   }
 }
 
 class City extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/>
   }
 }
 
 class Travel extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/>
   }
 }
 
 class Civil extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/>
   }
 }
 
 class Architecture extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/>
   }
 }
 
 class Document extends Component{
   render() {
-    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/> 
+    return 		<Image source={{uri: imageUrl}} style={{width:500, height:250}}/>
   }
 }
 

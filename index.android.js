@@ -18,7 +18,7 @@ export default class tuchong extends Component {
   }
 
   _setStatusBar() {
-    StatusBar.setHidden(true, "slide");
+    StatusBar.setHidden(true, "fade");
   }
 
   render() {

@@ -5,7 +5,10 @@ import {
   Text,
 } from "react-native";
 
-const baseUrl = "https://tuchong.com/rest/recommend"
+const request = require("request");
+const cheerio = require("cheerio");
+
+const baseUrl = "https://tuchong.com/rest/recommend/"
 
 export default class TabView extends Component {
   static propTypes = {
@@ -15,7 +18,7 @@ export default class TabView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      imagePool: [],   // maximum 100 images per tab
+      imagePool: [],   // maximum 100 images per tab, 20 per fetch
     }
   }
 
@@ -27,6 +30,19 @@ export default class TabView extends Component {
   // 3) an array of image in the image set, each should have a direclty url to the image and an aspect ration.
   componentDidMount() {
     alert("Mounted!");
+  }
+
+  _fetchImage() {
+    fetch_url = baseUrl + this.props.tabLabel;
+    fetch(fetch_url)
+    .then((response) => response.json())
+    .then((responseJson) => {
+      feed = {}
+      responseJson.posts.map((elem, index) => {
+        
+      })
+    })
+    .catch((error) => alert("连接服务器失败"));
   }
 
   render() {
