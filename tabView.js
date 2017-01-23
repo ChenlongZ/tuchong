@@ -8,7 +8,11 @@ import {
 const request = require("request");
 const cheerio = require("cheerio");
 
-const baseUrl = "https://tuchong.com/rest/recommend/"
+//tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1
+//user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
+const tagBaseUrl = "https://tuchong.com/rest/tags/";
+const userBaseUrl = "https://tuchong.com/rest/sites/";
+const imageBaseUrl = "https://tuchong.com/";
 
 export default class TabView extends Component {
   static propTypes = {
@@ -18,8 +22,10 @@ export default class TabView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+	  loading: false,
       imagePool: [],   // maximum 100 images per tab, 20 per fetch
-    }
+	}
+	_fetchImage.bind(this);
   }
 
   // fire network request, parse response and update state
@@ -29,7 +35,10 @@ export default class TabView extends Component {
   // 2) an object has the info of the author: the name of the author, the url to the author's webpage, the icon of the author
   // 3) an array of image in the image set, each should have a direclty url to the image and an aspect ration.
   componentDidMount() {
-    alert("Mounted!");
+	this.setState({
+		loading: true,
+	});
+	this._fetchImage();
   }
 
   _fetchImage() {
@@ -37,12 +46,34 @@ export default class TabView extends Component {
     fetch(fetch_url)
     .then((response) => response.json())
     .then((responseJson) => {
-      feed = {}
-      responseJson.posts.map((elem, index) => {
-        
-      })
-    })
-    .catch((error) => alert("连接服务器失败"));
+      result = responseJson.posts.map((elem, index) => {
+        feed = {};
+		feed.coverImageTitle = elem.title;
+		feed.coverImageLikes = parseInt(elem.favorites);
+		feed.coverImageComments = parseInt(elem.comments);
+		feed.publishedAt = elem.published_at;
+		feed.authorId = parseInt(elem.author_id);
+		feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
+		feed.postImages = elem.images.map((img, index) => {
+			  return {
+				  url: imageBaseUrl + img.user_id + "/f/" + img.img_id,
+				  height: img.height,
+				  width: img.width,
+				  ar: parseFloat(img.width)  / parseFloat(img.heigth),
+			  };
+		  });
+		feed.coverImageUrl = feed.postImages[0].url; 
+		feed.coverImageAR = feed.postImages[0].ar;
+		return feed;
+	  });
+	  this.setState({
+		imagePool: this.state.imagePool == undefined ? result : this.state.imagePool.concat(result),
+		loading: false,
+      });
+    });
+	.catch((error) => {
+		alert("连接服务器失败");
+	});
   }
 
   render() {
