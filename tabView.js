@@ -3,7 +3,13 @@ import {
   View,
   Image,
   Text,
+  Platform, 
+  ScrollableView,
+  RefreshControl,
+  Dimension,
+  ActivityIndicator,
 } from "react-native";
+import InfiniteScrollView from 'react-native-infinte-scroll-view'; 
 
 const request = require("request");
 const cheerio = require("cheerio");
@@ -21,10 +27,12 @@ export default class TabView extends Component {
 
   constructor(props) {
     super(props);
+	const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+	this.imagePool = [];   // maximum 100 images per tab, 20 per fetch
     this.state = {
 	  loading: false,
-      imagePool: [],   // maximum 100 images per tab, 20 per fetch
-	}
+      dataSource: ds.cloneWithRows(this.imagePool),
+	};
 	_fetchImage.bind(this);
   }
 
@@ -38,6 +46,7 @@ export default class TabView extends Component {
 	this.setState({
 		loading: true,
 	});
+	this.imageWidth = Dimension.get("window").width;
 	this._fetchImage();
   }
 
@@ -59,15 +68,16 @@ export default class TabView extends Component {
 				  url: imageBaseUrl + img.user_id + "/f/" + img.img_id,
 				  height: img.height,
 				  width: img.width,
-				  ar: parseFloat(img.width)  / parseFloat(img.heigth),
+				  ar: parseFloat(img.height) / parseFloat(img.width),
 			  };
 		  });
 		feed.coverImageUrl = feed.postImages[0].url; 
 		feed.coverImageAR = feed.postImages[0].ar;
 		return feed;
 	  });
+	  imagePool.concat(result);
 	  this.setState({
-		imagePool: this.state.imagePool == undefined ? result : this.state.imagePool.concat(result),
+		dataSource: ds.cloneWithRows(imagePool),
 		loading: false,
       });
     });
@@ -77,8 +87,53 @@ export default class TabView extends Component {
   }
 
   render() {
+	let progressBar = Platform.OS === "ios"
+		  ?()
+		  :();
+	let spinner = <ActivityIndicator size="large" style={{justifyContent:"center", alignItems:"center", padding:10}}/>;
+	let imageWidth = Dimension.get("window").width;
     return (
-      <Text>I'm {this.props.tabLabel}</Text>
-    )
+	   <ListView 
+		  style={styles.mainContainer}
+		  refreshControl={
+			  <RefreshControl
+				  refreshing={this.state.loading}
+				  onRefresh={this._refreshData.bind(this)}/>
+		  }
+		  dataSource={this.state.dataSource}
+		  renderRow={this._renderRow}
+		  renderScrollComponent={(props) => <RecyclerViewBackedScrollView {...props}/>}
+		  renderSeparator={this._renderSeparator}
+		  onEndReached={this._loadmore}
+		  onEndReachedThreshold={10}
+	  />	
+	);
   }
+  _renderRow(rowData, sectionID, rowID, highlightRow) => {
+      let imageWidth = this.imageWidth;
+	  let imageHeight = imageWidth * rowData.coverImageAR;
+	  return (
+		<TouchableOpacity onPress={() => {
+		  this._pressRow(rowData, rowID);
+	      highlightRow(sectionID, rowID);
+		  }}>
+	      <View style={{style.row}}>
+		    <Image source={{uri: img.coverImageUrl, width: imageWidth, height: imageHeight }}/>
+			<View style={{width: imageWidth, height: 20, backgroundColor: "white"}}/>
+		  </View>
+		</TouchableOpacity>
+	  );
+  }
+	_renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
+		return <View
+			key={sectionID + "-" + rowID}
+			style={{ height: adjacentRowHightlighted ? 2 :1;}}/>
+	}
+	//clear current data and reload 20 images
+	_refreshData() {
+
+	}
+	//load 20 more images and append to current list
+	_loadmore() {
+	}
 }
