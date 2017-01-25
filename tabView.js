@@ -3,7 +3,7 @@ import {
   View,
   Image,
   Text,
-  Platform, 
+  Platform,
   ListView,
   StyleSheet,
   RefreshControl,
@@ -11,8 +11,9 @@ import {
   Dimensions,
   ProgressBarAndroid,
   ProgressViewIOS,
-  TouchableOpacity,
+  TouchableHighlight,
 } from "react-native";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 //tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
@@ -51,47 +52,48 @@ export default class TabView extends Component {
   }
 
   _fetchImage() {
-	this.setState({
-		loading: true,
-	});
-	fetch_url = tagBaseUrl + this.props.tabLabel + "/posts?type=subject&page=" + this.pageNum;
-    fetch(fetch_url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      result = responseJson.postList.map((elem, index) => {
-        var feed = {};
-		feed.coverImageTitle = elem.title;
-		feed.coverImageLikes = parseInt(elem.favorites);
-		feed.coverImageComments = parseInt(elem.comments);
-		feed.publishedAt = elem.published_at;
-		feed.authorId = parseInt(elem.author_id);
-		feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
-		feed.postImages = elem.images.map((img, index) => {
-			  return {
-				  url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
-				  height: img.height,
-				  width: img.width,
-				  ar: parseFloat(img.height) / parseFloat(img.width),
-			  };
-		  });
-		feed.coverImageUrl = feed.postImages[0].url; 
-		feed.coverImageAR = feed.postImages[0].ar;
-		return feed;
-	  });
-	  this.imagePool = this.imagePool.concat(result);
-	  this.setState({
-		dataSource: ds.cloneWithRows(this.imagePool),
-		loading: false,
-	  });
-    })
-	.catch((error) => {
-		alert("连接服务器失败");
-	});
+  	this.setState({
+  		loading: true,
+  	});
+  	fetch_url = tagBaseUrl + this.props.tabLabel + "/posts?type=subject&page=" + this.pageNum;
+      fetch(fetch_url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        result = responseJson.postList.map((elem, index) => {
+          var feed = {};
+      		feed.coverImageTitle = elem.title;
+      		feed.coverImageLikes = parseInt(elem.favorites);
+      		feed.coverImageComments = parseInt(elem.comments);
+      		feed.publishedAt = elem.published_at;
+      		feed.authorId = parseInt(elem.author_id);
+      		feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
+      		feed.postImages = elem.images.map((img, index) => {
+  			  return {
+  				  url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
+  				  height: img.height,
+  				  width: img.width,
+  				  ar: parseFloat(img.height) / parseFloat(img.width),
+  			  };
+  		  });
+    		feed.coverImageUrl = feed.postImages[0].url;
+    		feed.coverImageAR = feed.postImages[0].ar;
+    		return feed;
+  	  });
+  	  this.imagePool = this.imagePool.concat(result);
+  	  this.setState({
+    		dataSource: ds.cloneWithRows(this.imagePool),
+    		loading: false,
+    	  });
+      })
+    	.catch((error) => {
+        // alert(error);
+    		alert("连接服务器失败");
+    	});
   }
 
   render() {
     return (
-	   <ListView 
+	   <ListView
 		  style={styles.mainContainer}
 		  refreshControl={
 			  <RefreshControl
@@ -105,41 +107,55 @@ export default class TabView extends Component {
 		  onEndReached={this._loadmore.bind(this)}
 		  onEndReachedThreshold={10}
       />
-	);
+	   );
   }
 
   _renderRow(rowData, sectionID, rowID, highlightRow) {
 	  let imageHeight = imageWidth * rowData.coverImageAR;
 	  return (
-		<TouchableOpacity onPress={() => {
+		<TouchableHighlight onPress={() => {
 		  this._pressRow(rowData, rowID);
 	      highlightRow(sectionID, rowID);
 		  }}>
-	      <View style={styles.row}>
+	    <View>
 		    <Image source={{uri: rowData.coverImageUrl, width: imageWidth, height: imageHeight }}/>
-			<View style={{width: imageWidth, height: 20, backgroundColor: "white"}}/>
-		  </View>
-		</TouchableOpacity>
+			  <View style={styles.bottomBar}>
+          <TouchableHighlight style={styles.bottomBarLeft} onPress={() => {}}>
+            <Text style={{fontSize: 12, color: 'white', fontWeight: '500'}}>{rowData.coverImageTitle}</Text>
+          </TouchableHighlight>
+          <View style={styles.bottomBarRight}>
+            <View style={{height: 30, width: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Icon name="ios-heart-outline" size={18} color='white'/>
+              <Text style={{fontSize: 12, textAlign: 'right', color: '#d8d8d8'}}>{rowData.coverImageLikes}</Text>
+            </View>
+            <View style={{height: 30, width: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Icon name="ios-chatboxes-outline" size={18} color='white'/>
+              <Text style={{fontSize: 12, textAlign: 'right', color: '#d8d8d8'}}>{rowData.coverImageComments}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+		</TouchableHighlight>
 	  );
   }
 
 	_renderSeparator(sectionID, rowID, adjacentRowHighlighted) {
 		return <View
 			key={sectionID + "-" + rowID}
-			style={{ height: adjacentRowHighlighted ? 2 :1}}/>
+			style={{ height: adjacentRowHighlighted ? 2 :1, backgroundColor: 'black'}}/>
 	}
 
-  //handle row click	
+  //handle row click
   _pressRow(rowData, rowID) {
   }
-	
+
 	//clear current data and reload 20 images
 	_refreshData() {
 	  this.imagePool = [];
 	  this.pageNum = 1;
 	  this._fetchImage();
 	}
-	
+
 	//load 20 more images and append to current list
 	_loadmore() {
 		if (this.imagePool.length > 0 && this.imagePool.length < 100) {
@@ -153,7 +169,7 @@ export default class TabView extends Component {
 			else if (Platform.OS === 'android') ToastAndroid.show("已经是最后一页了", ToastAndroid.SHORT);
 		}
 	}
-  
+
   _showloading() {
     if (this.state.loadmore && this.state.loading)
       return <TuchongLoadingIndicator />
@@ -165,6 +181,21 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
   },
-  row: {
+  bottomBar: {
+    height: 42,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'black'
+  },
+  bottomBarLeft: {
+    marginLeft: 15,
+  },
+  bottomBarRight: {
+    marginRight: 15,
+    width: 85,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   }
 });
