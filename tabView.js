@@ -13,16 +13,16 @@ import {
   ProgressViewIOS,
   TouchableHighlight,
 } from "react-native";
+
 import Icon from 'react-native-vector-icons/Ionicons';
 
-//tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1
+//tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1&order=new
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
 const tagBaseUrl = "https://tuchong.com/rest/tags/";
 const userBaseUrl = "https://tuchong.com/rest/sites/";
 const imageBaseUrl = "https://photo.tuchong.com/";
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-const imageWidth = Dimensions.get('window').width;
 
 export default class TabView extends Component {
   static propTypes = {
@@ -37,6 +37,7 @@ export default class TabView extends Component {
 	  loading: false,
 	  loadmore: false,
       dataSource: ds.cloneWithRows(this.imagePool),
+	  deviceWidth: Dimensions.get('window').width, 
 	};
   }
 
@@ -50,12 +51,12 @@ export default class TabView extends Component {
 	this.pageNum = 1;
 	this._fetchImage();
   }
-
+  
   _fetchImage() {
   	this.setState({
   		loading: true,
   	});
-  	fetch_url = tagBaseUrl + this.props.tabLabel + "/posts?type=subject&page=" + this.pageNum;
+  	fetch_url = tagBaseUrl + this.props.tabLabel + "/posts?type=subject&order=new&page=" + this.pageNum;
       fetch(fetch_url)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -100,6 +101,9 @@ export default class TabView extends Component {
 				  refreshing={this.state.loading}
 				  onRefresh={this._refreshData.bind(this)}/>
 		  }
+		  onLayout={(event) => {
+			  this.setState({deviceWidth : event.nativeEvent.layout.width});
+		  }}
 		  dataSource={this.state.dataSource}
 		  renderRow={this._renderRow.bind(this)}
 		  renderScrollComponent={(props) => <RecyclerViewBackedScrollView {...props} />}
@@ -111,7 +115,8 @@ export default class TabView extends Component {
   }
 
   _renderRow(rowData, sectionID, rowID, highlightRow) {
-	  let imageHeight = imageWidth * rowData.coverImageAR;
+	  let imageWidth = this.state.deviceWidth;
+	  let imageHeight = this.state.deviceWidth * rowData.coverImageAR;
 	  return (
 		<TouchableHighlight onPress={() => {
 		  this._pressRow(rowData, rowID);

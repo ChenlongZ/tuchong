@@ -13,7 +13,7 @@ export default class tuchong extends Component {
   constructor() {
     super();
     this.state = {
-      tabs: ["风光", "人像", "纪实", "建筑", "旅行", "少女"],
+      tabs: ["风光", "人像", "纪实", "建筑", "旅行", "少女", "人文", "街拍", "夜景", "静物", "私房"],
     }
   }
 

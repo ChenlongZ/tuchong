@@ -12,8 +12,7 @@
     "react-native-gifted-messenger": "^0.1.4",
     "react-native-photo-view": "^1.2.0",
     "react-native-scrollable-tab-view": "^0.7.1",
-    "react-native-vector-icons": "^4.0.0",
-    "undefined": "^0.1.0"
+    "react-native-vector-icons": "^4.0.0"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",
