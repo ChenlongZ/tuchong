@@ -13,8 +13,9 @@ import {
   ProgressViewIOS,
   TouchableHighlight,
 } from "react-native";
-
 import Icon from 'react-native-vector-icons/Ionicons';
+import Swiper from 'react-native-swiper';
+import PhotoView from 'react-native-photo-view';
 
 //tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1&order=new
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
@@ -35,9 +36,11 @@ export default class TabView extends Component {
 	this.pageNum = 1;
     this.state = {
 	  loading: false,
-	  loadmore: false,
+		loadmore: false,
       dataSource: ds.cloneWithRows(this.imagePool),
 	  deviceWidth: Dimensions.get('window').width, 
+		showPhotoSetView: false,
+		photoSetIndex: 0,
 	};
   }
 
@@ -87,31 +90,35 @@ export default class TabView extends Component {
     	  });
       })
     	.catch((error) => {
-        // alert(error);
     		alert("连接服务器失败");
     	});
   }
 
   render() {
-    return (
+	  _this = this;
+	 return (
+	  <View style={{position: 'relative'}} >
+		  {_this.state.showPhotoSetView && <PhotoSetView 
+			imgSet={_this.imagePool[_this.state.photoViewIndex].postImages} 
+			onPressHandle={_this._pressPhotoSetView.bind(_this)} />}
 	   <ListView
 		  style={styles.mainContainer}
 		  refreshControl={
 			  <RefreshControl
-				  refreshing={this.state.loading}
-				  onRefresh={this._refreshData.bind(this)}/>
+				  refreshing={_this.state.loading}
+				  onRefresh={_this._refreshData.bind(_this)}/>
 		  }
 		  onLayout={(event) => {
-			  this.setState({deviceWidth : event.nativeEvent.layout.width});
+			  _this.setState({deviceWidth : event.nativeEvent.layout.width});
 		  }}
-		  dataSource={this.state.dataSource}
-		  renderRow={this._renderRow.bind(this)}
+		  dataSource={_this.state.dataSource}
+		  renderRow={_this._renderRow.bind(this)}
 		  renderScrollComponent={(props) => <RecyclerViewBackedScrollView {...props} />}
-		  renderSeparator={this._renderSeparator}
-		  onEndReached={this._loadmore.bind(this)}
+		  renderSeparator={_this._renderSeparator}
+		  onEndReached={_this._loadmore.bind(_this)}
 		  onEndReachedThreshold={10}
-      />
-	   );
+	  /></View>
+	 );
   }
 
   _renderRow(rowData, sectionID, rowID, highlightRow) {
@@ -152,6 +159,10 @@ export default class TabView extends Component {
 
   //handle row click
   _pressRow(rowData, rowID) {
+	  this.setState({ showPhotoSetView: true, photoSetIndex: parseInt(rowID) });
+  }
+  _pressPhotoSetView() {
+	  this.setState({ showPhotoSetView: false});
   }
 
 	//clear current data and reload 20 images
@@ -182,9 +193,39 @@ export default class TabView extends Component {
   }
 }
 
+class PhotoSetView extends Component {
+	static propTypes = {
+		imgSet: React.PropTypes.array.isRequired,
+		onPressHandle: React.PropTypes.func.isRequired,
+	};
+	constructor(props) {
+		super(props);
+	}
+
+	render() {
+		return(<Swiper style={styles.photoSetSwiper}
+			dot={<View style={{backgroundColor: 'rgba(0,0,0,.2)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
+			activeDot={<View style={{backgroundColor: '#000', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}>
+			{
+				this.props.imgSet.map((elem, index) => <View key={index} style={styles.photoSetView}>
+				 <TouchableWithoutFeedback onPress={this.props.onPressHandle}>
+					 <PhotoView
+						 source={{uri: elem.uri}}
+						 resizeMode='contain'
+						 minimumZoomScale={0.5}
+						 maximumZoomScale={3}
+						 androidScaleType='center'
+						 />
+				 </TouchableWithoutFeedback>
+				</View>)
+			}
+		</Swiper>);
+	}
+}
+
 const styles = StyleSheet.create({
   mainContainer: {
-    flex: 1,
+	top: 0, right: 0, bottom: 0, left: 0,
   },
   bottomBar: {
     height: 42,
@@ -202,5 +243,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  }
+  },
+	photoSetSwiper: {
+		backgroundColor: '#000',
+		top: 0,
+		right: 0,
+		bottom: 0,
+		left: 0,
+	},
+	photoSetView: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	}
 });
