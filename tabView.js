@@ -12,6 +12,7 @@ import {
   ProgressBarAndroid,
   ProgressViewIOS,
   TouchableHighlight,
+  TouchableWithoutFeedback,
 } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper';
@@ -95,27 +96,26 @@ export default class TabView extends Component {
   }
 
   render() {
-	  _this = this;
 	 return (
 	  <View style={{position: 'relative'}} >
-		  {_this.state.showPhotoSetView && <PhotoSetView 
-			imgSet={_this.imagePool[_this.state.photoViewIndex].postImages} 
-			onPressHandle={_this._pressPhotoSetView.bind(_this)} />}
+		  {this.state.showPhotoSetView && <PhotoSetView 
+			imgSet={this.imagePool[this.state.photoSetIndex].postImages} 
+			onPressHandle={this._pressPhotoSetView.bind(this)} />}
 	   <ListView
 		  style={styles.mainContainer}
 		  refreshControl={
 			  <RefreshControl
-				  refreshing={_this.state.loading}
-				  onRefresh={_this._refreshData.bind(_this)}/>
+				  refreshing={this.state.loading}
+				  onRefresh={this._refreshData.bind(this)}/>
 		  }
 		  onLayout={(event) => {
-			  _this.setState({deviceWidth : event.nativeEvent.layout.width});
+			  this.setState({deviceWidth : event.nativeEvent.layout.width});
 		  }}
-		  dataSource={_this.state.dataSource}
-		  renderRow={_this._renderRow.bind(this)}
+		  dataSource={this.state.dataSource}
+		  renderRow={this._renderRow.bind(this)}
 		  renderScrollComponent={(props) => <RecyclerViewBackedScrollView {...props} />}
-		  renderSeparator={_this._renderSeparator}
-		  onEndReached={_this._loadmore.bind(_this)}
+		  renderSeparator={this._renderSeparator}
+		  onEndReached={this._loadmore.bind(this)}
 		  onEndReachedThreshold={10}
 	  /></View>
 	 );
@@ -125,29 +125,29 @@ export default class TabView extends Component {
 	  let imageWidth = this.state.deviceWidth;
 	  let imageHeight = this.state.deviceWidth * rowData.coverImageAR;
 	  return (
-		<TouchableHighlight onPress={() => {
-		  this._pressRow(rowData, rowID);
-	      highlightRow(sectionID, rowID);
-		  }}>
 	    <View>
-		    <Image source={{uri: rowData.coverImageUrl, width: imageWidth, height: imageHeight }}/>
-			  <View style={styles.bottomBar}>
-          <TouchableHighlight style={styles.bottomBarLeft} onPress={() => {}}>
-            <Text style={{fontSize: 12, color: 'white', fontWeight: '500'}}>{rowData.coverImageTitle}</Text>
-          </TouchableHighlight>
-          <View style={styles.bottomBarRight}>
-            <View style={{height: 30, width: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Icon name="ios-heart-outline" size={18} color='white'/>
-              <Text style={{fontSize: 12, textAlign: 'right', color: '#d8d8d8'}}>{rowData.coverImageLikes}</Text>
-            </View>
-            <View style={{height: 30, width: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Icon name="ios-chatboxes-outline" size={18} color='white'/>
-              <Text style={{fontSize: 12, textAlign: 'right', color: '#d8d8d8'}}>{rowData.coverImageComments}</Text>
-            </View>
-          </View>
+			<TouchableHighlight onPress={() => {
+			  this._pressRow(rowData, rowID);
+	    	  highlightRow(sectionID, rowID);
+			  }}>
+			    <Image source={{uri: rowData.coverImageUrl, width: imageWidth, height: imageHeight }}/>
+			</TouchableHighlight>
+		    <View style={styles.bottomBar}>
+              <TouchableHighlight style={styles.bottomBarLeft} onPress={() => {}}>
+                <Text style={{fontSize: 12, color: 'white', fontWeight: '500'}}>{rowData.coverImageTitle}</Text>
+              </TouchableHighlight>
+              <View style={styles.bottomBarRight}>
+                <View style={{height: 30, width: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <Icon name="ios-heart-outline" size={18} color='white'/>
+                  <Text style={{fontSize: 12, textAlign: 'right', color: '#d8d8d8'}}>{rowData.coverImageLikes}</Text>
+                </View>
+                <View style={{height: 30, width: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <Icon name="ios-chatboxes-outline" size={18} color='white'/>
+                  <Text style={{fontSize: 12, textAlign: 'right', color: '#d8d8d8'}}>{rowData.coverImageComments}</Text>
+                </View>
+              </View>
+		    </View>
         </View>
-      </View>
-		</TouchableHighlight>
 	  );
   }
 
@@ -200,21 +200,23 @@ class PhotoSetView extends Component {
 	};
 	constructor(props) {
 		super(props);
+		this.photoWidth = Dimensions.get('window').width;
 	}
 
 	render() {
 		return(<Swiper style={styles.photoSetSwiper}
-			dot={<View style={{backgroundColor: 'rgba(0,0,0,.2)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
-			activeDot={<View style={{backgroundColor: '#000', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}>
+			dot={<View style={{backgroundColor: 'rgba(0,0,0,.5)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
+			activeDot={<View style={{backgroundColor: '#AAA', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}>
 			{
 				this.props.imgSet.map((elem, index) => <View key={index} style={styles.photoSetView}>
-				 <TouchableWithoutFeedback onPress={this.props.onPressHandle}>
+					<TouchableWithoutFeedback onPress={this.props.onPressHandle}>
 					 <PhotoView
-						 source={{uri: elem.uri}}
+						 source={{uri: elem.url}}
 						 resizeMode='contain'
 						 minimumZoomScale={0.5}
 						 maximumZoomScale={3}
 						 androidScaleType='center'
+						 style={{ width:this.photoWidth, height: this.photoWidth * elem.ar}}
 						 />
 				 </TouchableWithoutFeedback>
 				</View>)
@@ -246,14 +248,8 @@ const styles = StyleSheet.create({
   },
 	photoSetSwiper: {
 		backgroundColor: '#000',
-		top: 0,
-		right: 0,
-		bottom: 0,
-		left: 0,
 	},
 	photoSetView: {
 		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	}
 });
