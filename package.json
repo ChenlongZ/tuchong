@@ -13,7 +13,7 @@
     "react-native-photo-view": "^1.2.0",
     "react-native-scrollable-tab-view": "^0.7.1",
     "react-native-vector-icons": "^4.0.0",
-	"react-native-swiper": "latest"
+	  "react-native-swiper": "latest"
   },
   "devDependencies": {
     "babel-jest": "18.0.0",

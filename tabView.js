@@ -1,19 +1,26 @@
-import React, {Component} from "react";
-import {
-  View,
-  Image,
-  Text,
-  Platform,
-  ListView,
-  StyleSheet,
-  RefreshControl,
-  RecyclerViewBackedScrollView,
-  Dimensions,
-  ProgressBarAndroid,
-  ProgressViewIOS,
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-} from "react-native";
+const Component = require('Component');
+const Dimensions = require('Dimensions');
+const Icon = require('Icon.react');
+const Image = require('Image.react');
+const ListView = require('ListView');
+const PhotoView = require('PhotoView.react');
+const Platform = require('Platform');
+const React = require('React');
+const RecyclerViewBackedScrollView = require('RecyclerViewBackedScrollView.react');
+const RefreshControl = require('RefreshControl.react');
+const StyleSheet = require('StyleSheet');
+const Swiper = require('Swiper.react');
+const Text = require('Text.react');
+const ToastAndroid = require('ToastAndroid');
+const TouchableHighlight = require('TouchableHighlight.react');
+const TouchableWithoutFeedback = require('TouchableWithoutFeedback.react');
+const TuchongLoadingIndicator = require('TuchongLoadingIndicator.react');
+const View = require('View.react');
+
+const fetch = require('fetch');
+const fetch_url = require('fetch_url');
+const result = require('result');
+
 import Icon from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper';
 import PhotoView from 'react-native-photo-view';
@@ -33,16 +40,16 @@ export default class TabView extends Component {
 
   constructor(props) {
     super(props);
-	this.imagePool = [];   // maximum 100 images per tab, 20 per fetch
-	this.pageNum = 1;
-    this.state = {
-	  loading: false,
-		loadmore: false,
-      dataSource: ds.cloneWithRows(this.imagePool),
-	  deviceWidth: Dimensions.get('window').width, 
-		showPhotoSetView: false,
-		photoSetIndex: 0,
-	};
+	   this.imagePool = [];   // maximum 100 images per tab, 20 per fetch
+	    this.pageNum = 1;
+      this.state = {
+        loading: false,
+		    loadmore: false,
+        dataSource: ds.cloneWithRows(this.imagePool),
+	      deviceWidth: Dimensions.get('window').width,
+		    showPhotoSetView: false,
+		    photoSetIndex: 0,
+	    };
   }
 
   // fire network request, parse response and update state
@@ -55,7 +62,7 @@ export default class TabView extends Component {
 	this.pageNum = 1;
 	this._fetchImage();
   }
-  
+
   _fetchImage() {
   	this.setState({
   		loading: true,
@@ -98,8 +105,8 @@ export default class TabView extends Component {
   render() {
 	 return (
 	  <View style={{position: 'relative'}} >
-		  {this.state.showPhotoSetView && <PhotoSetView 
-			imgSet={this.imagePool[this.state.photoSetIndex].postImages} 
+		  {this.state.showPhotoSetView && <PhotoSetView
+			imgSet={this.imagePool[this.state.photoSetIndex].postImages}
 			onPressHandle={this._pressPhotoSetView.bind(this)} />}
 	   <ListView
 		  style={styles.mainContainer}
@@ -126,12 +133,12 @@ export default class TabView extends Component {
 	  let imageHeight = this.state.deviceWidth * rowData.coverImageAR;
 	  return (
 	    <View>
-			<TouchableHighlight onPress={() => {
-			  this._pressRow(rowData, rowID);
-	    	  highlightRow(sectionID, rowID);
-			  }}>
-			    <Image source={{uri: rowData.coverImageUrl, width: imageWidth, height: imageHeight }}/>
-			</TouchableHighlight>
+  			<TouchableHighlight onPress={() => {
+  			  this._pressRow(rowData, rowID);
+  	    	  highlightRow(sectionID, rowID);
+  			  }}>
+  			  <Image source={{uri: rowData.coverImageUrl, width: imageWidth, height: imageHeight }}/>
+  			</TouchableHighlight>
 		    <View style={styles.bottomBar}>
               <TouchableHighlight style={styles.bottomBarLeft} onPress={() => {}}>
                 <Text style={{fontSize: 12, color: 'white', fontWeight: '500'}}>{rowData.coverImageTitle}</Text>
@@ -147,7 +154,7 @@ export default class TabView extends Component {
                 </View>
               </View>
 		    </View>
-        </View>
+      </View>
 	  );
   }
 
@@ -204,24 +211,26 @@ class PhotoSetView extends Component {
 	}
 
 	render() {
-		return(<Swiper style={styles.photoSetSwiper}
-			dot={<View style={{backgroundColor: 'rgba(0,0,0,.5)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
-			activeDot={<View style={{backgroundColor: '#AAA', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}>
-			{
-				this.props.imgSet.map((elem, index) => <View key={index} style={styles.photoSetView}>
-					<TouchableWithoutFeedback onPress={this.props.onPressHandle}>
-					 <PhotoView
-						 source={{uri: elem.url}}
-						 resizeMode='contain'
-						 minimumZoomScale={0.5}
-						 maximumZoomScale={3}
-						 androidScaleType='center'
-						 style={{ width:this.photoWidth, height: this.photoWidth * elem.ar}}
-						 />
-				 </TouchableWithoutFeedback>
-				</View>)
-			}
-		</Swiper>);
+    let pressHandler = this.props.onPressHandle;
+		return(
+      <Swiper style={styles.photoSetSwiper}
+			  dot={<View style={{backgroundColor: 'rgba(0,0,0,.5)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
+			  activeDot={<View style={{backgroundColor: '#AAA', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}>
+			  {
+  				this.props.imgSet.map((elem, index) => <View key={index} style={styles.photoSetView}>
+  					<TouchableWithoutFeedback onPress={pressHandler}>
+  					 <PhotoView
+  						 source={{uri: elem.url}}
+  						 resizeMode='contain'
+  						 minimumZoomScale={0.5}
+  						 maximumZoomScale={3}
+  						 androidScaleType='center'
+  						 style={{ width:this.photoWidth, height: this.photoWidth * elem.ar}}
+  						 />
+  				 </TouchableWithoutFeedback>
+  				</View>)
+  			}
+		  </Swiper>);
 	}
 }
 
