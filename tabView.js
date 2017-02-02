@@ -1,25 +1,18 @@
-const Component = require('Component');
-const Dimensions = require('Dimensions');
-const Icon = require('Icon.react');
-const Image = require('Image.react');
-const ListView = require('ListView');
-const PhotoView = require('PhotoView.react');
-const Platform = require('Platform');
-const React = require('React');
-const RecyclerViewBackedScrollView = require('RecyclerViewBackedScrollView.react');
-const RefreshControl = require('RefreshControl.react');
-const StyleSheet = require('StyleSheet');
-const Swiper = require('Swiper.react');
-const Text = require('Text.react');
-const ToastAndroid = require('ToastAndroid');
-const TouchableHighlight = require('TouchableHighlight.react');
-const TouchableWithoutFeedback = require('TouchableWithoutFeedback.react');
-const TuchongLoadingIndicator = require('TuchongLoadingIndicator.react');
-const View = require('View.react');
-
-const fetch = require('fetch');
-const fetch_url = require('fetch_url');
-const result = require('result');
+import React, {Component} from 'react';
+import {
+	Dimensions,
+	Image,
+	ListView,
+	Platform,
+	RecyclerViewBackedScrollView,
+	RefreshControl,
+	StyleSheet,
+	Text,
+	ToastAndroid,
+	TouchableHighlight,
+	TouchableWithoutFeedback,
+	View,
+} from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import Swiper from 'react-native-swiper';
@@ -107,7 +100,8 @@ export default class TabView extends Component {
 	  <View style={{position: 'relative'}} >
 		  {this.state.showPhotoSetView && <PhotoSetView
 			imgSet={this.imagePool[this.state.photoSetIndex].postImages}
-			onPressHandle={this._pressPhotoSetView.bind(this)} />}
+		    onPressHandler={this._pressPhotoSetView.bind(this)}
+		    deviceWidth={this.state.deviceWidth}/>}
 	   <ListView
 		  style={styles.mainContainer}
 		  refreshControl={
@@ -164,7 +158,6 @@ export default class TabView extends Component {
 			style={{ height: adjacentRowHighlighted ? 2 :1, backgroundColor: 'black'}}/>
 	}
 
-  //handle row click
   _pressRow(rowData, rowID) {
 	  this.setState({ showPhotoSetView: true, photoSetIndex: parseInt(rowID) });
   }
@@ -172,7 +165,6 @@ export default class TabView extends Component {
 	  this.setState({ showPhotoSetView: false});
   }
 
-	//clear current data and reload 20 images
 	_refreshData() {
 	  this.imagePool = [];
 	  this.pageNum = 1;
@@ -192,47 +184,26 @@ export default class TabView extends Component {
 			else if (Platform.OS === 'android') ToastAndroid.show("已经是最后一页了", ToastAndroid.SHORT);
 		}
 	}
-
-  _showloading() {
-    if (this.state.loadmore && this.state.loading)
-      return <TuchongLoadingIndicator />
-    else return null;
-  }
 }
 
-class PhotoSetView extends Component {
-	static propTypes = {
-		imgSet: React.PropTypes.array.isRequired,
-		onPressHandle: React.PropTypes.func.isRequired,
-	};
-	constructor(props) {
-		super(props);
-		this.photoWidth = Dimensions.get('window').width;
-	}
-
-	render() {
-    let pressHandler = this.props.onPressHandle;
-		return(
-      <Swiper style={styles.photoSetSwiper}
+	const PhotoSetView = props => <Swiper style={styles.photoSetSwiper}
 			  dot={<View style={{backgroundColor: 'rgba(0,0,0,.5)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
 			  activeDot={<View style={{backgroundColor: '#AAA', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}>
 			  {
-  				this.props.imgSet.map((elem, index) => <View key={index} style={styles.photoSetView}>
-  					<TouchableWithoutFeedback onPress={pressHandler}>
+  				props.imgSet.map((elem, index) => <View key={index} style={styles.photoSetView}>
+					<TouchableWithoutFeedback onPress={(e)=>alert("wtf!")}>
   					 <PhotoView
   						 source={{uri: elem.url}}
   						 resizeMode='contain'
   						 minimumZoomScale={0.5}
   						 maximumZoomScale={3}
   						 androidScaleType='center'
-  						 style={{ width:this.photoWidth, height: this.photoWidth * elem.ar}}
+  						 style={{ width:props.deviceWidth, height: props.deviceWidth * elem.ar}}
   						 />
   				 </TouchableWithoutFeedback>
   				</View>)
-  			}
-		  </Swiper>);
-	}
-}
+  			  }
+	  </Swiper>
 
 const styles = StyleSheet.create({
   mainContainer: {

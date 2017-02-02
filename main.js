@@ -23,7 +23,7 @@ export default class Main extends Component {
   render() {
     return (
 	  <ScrollableTabView 
-		renderTabBar={() => <ScrollableTabBar/>}>
+		renderTabBar={() => <ScrollableTabBar style={{height: 45}}/>}>
 		{this.props.tabs.map((elem, index) => <TabView key={index} tabLabel={elem} />)}
       </ScrollableTabView>
     )
