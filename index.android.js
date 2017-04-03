@@ -33,14 +33,19 @@ class tuchong extends Component {
           <Scene
             key='taggedView'
             component={ TaggedView }
-            title='change me' />
+            navigationBarStyle={{backgroundColor: 'transparent'}}
+            leftButtonIconStyle={{tintColor: 'black'}} />
           <Scene
             key='photoView'
             component={ PhotoView }
             title='change me'
             direction='vertical'
-            hideNavBar={ true }
-          />
+            navigationBarStyle={
+              {backgroundColor: 'transparent',
+               borderBottomColor: 'white',
+               borderBottomWidth: 2}}
+            leftButtonIconStyle={{tintColor: 'white'}}
+            />
         </Scene>
       </Router>
     );

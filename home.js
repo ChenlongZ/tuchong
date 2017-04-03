@@ -3,6 +3,7 @@ import {
   View,
   Text,
   Image,
+  TouchableHighlight,
   Dimensions,
   Platform,
   ScrollView,
@@ -65,13 +66,15 @@ export default class Home extends Component {
 
   renderRow(item, sectionID, rowID) {
     return (
-      <View key={item.key} style={styles.coverView} onPress={() => Actions.photoView({tag: item.tag})}>
-        <Image style={styles.coverViewImage}
-          source={{uri : item.url, width: (width - 40) / 3, height: (width - 40) / 3}}/>
-        <View style={styles.coverViewText}>
-          <Text style={{fontSize: 13, color: 'white', fontWeight: "300"}}>{ item.tag }</Text>
+      <TouchableHighlight key={item.key} style={styles.coverView} onPress={() => Actions.taggedView({tag: item.tag})}>
+        <View>
+          <Image style={styles.coverViewImage}
+            source={{uri : item.url, width: (width - 40) / 3, height: (width - 40) / 3}}/>
+          <View style={styles.coverViewText}>
+            <Text style={{fontSize: 13, color: 'white', fontWeight: "300"}}>{ item.tag }</Text>
+          </View>
         </View>
-      </View>
+      </TouchableHighlight>
     )
   }
 
@@ -89,7 +92,7 @@ export default class Home extends Component {
     var sections = ['主题', '器材', '风格', '地区'].map((elem, index) => {
       data = this._generateData(tags[elem], index);
       return(
-        <View style={styles.subsection}>
+        <View key={index} style={styles.subsection}>
           <View style={styles.subsectionTitle} >
             <View style={styles.subsectionTitleDeco}>
             </View>
