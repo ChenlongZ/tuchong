@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import {
   View,
+  Image,
+  Dimensions,
+  ScrollView,
   ListView,
+  RecyclerViewBackedScrollView,
+  StyleSheet,
   Text,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
@@ -19,6 +24,9 @@ import { Actions } from 'react-native-router-flux';
 const tagBaseUrl = "https://tuchong.com/rest/tags/";
 const userBaseUrl = "https://tuchong.com/rest/sites/";
 const imageBaseUrl = "https://photo.tuchong.com/";
+
+const deviceWidth = Dimensions.get('window').width
+const deviceHeight = Dimensions.get('window').height;
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -49,6 +57,9 @@ export default class TaggedView extends Component {
         var feed = {};
         feed.title = elem.title;
         feed.coverImageGridUrl = elem.cover_image_src;
+        if (feed.coverImageGridUrl === undefined) {
+          return undefined;
+        }
         feed.coverImageLargeUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/l/$3");
         feed.coverImageMediumUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/m/$3");
         feed.coverImageSmallUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/s/$3");
@@ -58,26 +69,94 @@ export default class TaggedView extends Component {
       	feed.authorId = parseInt(elem.author_id);
       	feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
       	feed.postImages = elem.images.map((img, index) => {
-  			 return {
-  			  url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
-  			  height: img.height,
-  			  width: img.width,
-  			  ar: parseFloat(img.height) / parseFloat(img.width),
-  			 };
-  		  });
-    	feed.coverImageAR = feed.postImages[0].ar;
-    	return feed;
+    			 return {
+    			  url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
+    			  height: img.height,
+    			  width: img.width,
+    			  ar: parseFloat(img.height) / parseFloat(img.width),
+    			 };
+    		 });
+    	  feed.coverImageAR = feed.postImages[0].ar;
+    	  return feed;
   	 });
-    this.isLoading = false;
-  	this.imagePool = this.imagePool.concat(result);
-  	this.setState({
+     result = result.filter((val) => val !== undefined);
+     if (result.length % 2 != 0) result.pop();
+     for (i = 0; i < result.length; i+=2) {
+       this.imagePool.push({
+         first: result[i],
+         second: result[i + 1],
+       });
+     }
+     this.isLoading = false;
+  	 this.setState({
     	dataSource: ds.cloneWithRows(this.imagePool),
-      });
+     });
     })
     .catch((error) => {
       // alert(error);
-    	alert("连接服务器失败");
+    	alert("Hahaha, 404 not found!");
     });
+  }
+
+  _generateImages() {
+    let paddingLeftRight = 2;
+    return (
+      <ListView style={styles.content}
+        dataSource={this.state.dataSource}
+        renderRow={(rowData, sectionID, rowID, highlightRow) => {
+          let rowWidth = deviceWidth;
+          let rowHeight = (rowWidth - 3 * paddingLeftRight) * rowData.first.coverImageAR * rowData.second.coverImageAR / (rowData.first.coverImageAR + rowData.second.coverImageAR);
+          let firstItemWidth = rowHeight * rowData.first.coverImageAR + paddingLeftRight / 2;
+          let firstItemHeight = rowHeight;
+          let secondItemWidth = rowHeight * rowData.second.coverImageAR + paddingLeftRight / 2;
+          let secondItemHeight = rowHeight;
+          let firstImgWidth = firstItemWidth - paddingLeftRight / 2;
+          let firstImgHeight = rowHeight;
+          let secondImgWidth = secondItemWidth - paddingLeftRight / 2;
+          let secondImgHeight = rowHeight;
+          return (
+            <View key={rowID} style={{
+              paddingLeft: paddingLeftRight,
+              paddingRight: paddingLeftRight,
+            }}>
+              <View style={{
+                paddingRight: paddingLeftRight / 2,
+              }}>
+                <Image source={{
+                  uri: rowData.first.coverImageMediumUrl,
+                  width: firstImgWidth,
+                  height: firstImgHeight }}/>
+                <Text>Hello</Text>
+              </View>
+              <View style={{
+                paddingLeft: paddingLeftRight / 2,
+              }}>
+                <Image source={{
+                  uri: rowData.second.coverImageMediumUrl,
+                  width: secondImgWidth,
+                  height: secondImgHeight }}/>
+                <Text>Hello</Text>
+              </View>
+            </View>
+          )
+        }}
+  		  renderScrollComponent={(props) => <RecyclerViewBackedScrollView {...props} />}
+  		  renderSeparator={(sectionID, rowID, adjacentRowHighlighted) => {
+          return (<View key={`${sectionID}-${rowID}`}
+            style={{width: deviceWidth, height: paddingLeftRight, backgroundColor: 'white'}}/>)
+        }}
+  		  onEndReached={() => {
+          if(this.pageNum == 0) {
+          } else if (this.pageNum > 10) {
+            alert("Late page reached");
+          } else {
+            this.pageNum++;
+            _fetch();
+          }
+        }}
+  		  onEndReachedThreshold={10}
+       />
+    )
   }
 
   componentDidMount() {
@@ -87,17 +166,35 @@ export default class TaggedView extends Component {
 
   render() {
     return (
-      // transparent nav bar with a back button, TODO: gone when scroll down
+      <ScrollView styles={{flex: 1}}>
+        {/* transparent nav bar with a back button */}
+        {/* TODO: gone when scroll down */}
 
-      // thumbnail of the 1st picture (1/3 screen)
+        {/* thumbnail of the 1st picture (1/3 screen) */}
+        <View style={styles.cover}>
+          <Image source={require('./resources/temp_background.jpg')}/>
+        </View>
 
-      // tag name, sub title, hot/new taggle
+        {/* tag name, sub title, hot/new taggle */}
+        <View style={styles.segment}>
+        </View>
 
-      // infinte scroll view (max = 10 pages)
-      // two picture in a row, adjust heigth
-      <View style={{margin: 128}}>
-        <Text onPress={Actions.photoView}>This is {this.props.tag}!</Text>
-      </View>
+        {/* infinte scroll view (max = 10 pages) */}
+        {/* two picture in a row, adjust heigth */}
+        {this._generateImages()}
+      </ScrollView>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  cover: {
+    height: deviceHeight/6,
+  },
+  segment: {
+    height: deviceHeight/8,
+  },
+  content: {
+
+  },
+});
