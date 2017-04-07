@@ -99,16 +99,16 @@ export default class TaggedView extends Component {
   }
 
   _generateImages() {
-    let paddingLeftRight = 2;
+    let paddingLeftRight = 3;
     return (
       <ListView style={styles.content}
         dataSource={this.state.dataSource}
         renderRow={(rowData, sectionID, rowID, highlightRow) => {
           let rowWidth = deviceWidth;
           let rowHeight = (rowWidth - 3 * paddingLeftRight) * rowData.first.coverImageAR * rowData.second.coverImageAR / (rowData.first.coverImageAR + rowData.second.coverImageAR);
-          let firstItemWidth = rowHeight * rowData.first.coverImageAR + paddingLeftRight / 2;
+          let firstItemWidth = rowHeight / rowData.first.coverImageAR + paddingLeftRight / 2;
           let firstItemHeight = rowHeight;
-          let secondItemWidth = rowHeight * rowData.second.coverImageAR + paddingLeftRight / 2;
+          let secondItemWidth = rowHeight / rowData.second.coverImageAR + paddingLeftRight / 2;
           let secondItemHeight = rowHeight;
           let firstImgWidth = firstItemWidth - paddingLeftRight / 2;
           let firstImgHeight = rowHeight;
@@ -116,6 +116,7 @@ export default class TaggedView extends Component {
           let secondImgHeight = rowHeight;
           return (
             <View key={rowID} style={{
+              flexDirection: 'row',
               paddingLeft: paddingLeftRight,
               paddingRight: paddingLeftRight,
             }}>
@@ -126,7 +127,6 @@ export default class TaggedView extends Component {
                   uri: rowData.first.coverImageMediumUrl,
                   width: firstImgWidth,
                   height: firstImgHeight }}/>
-                <Text>Hello</Text>
               </View>
               <View style={{
                 paddingLeft: paddingLeftRight / 2,
@@ -135,7 +135,6 @@ export default class TaggedView extends Component {
                   uri: rowData.second.coverImageMediumUrl,
                   width: secondImgWidth,
                   height: secondImgHeight }}/>
-                <Text>Hello</Text>
               </View>
             </View>
           )
@@ -151,7 +150,7 @@ export default class TaggedView extends Component {
             alert("Late page reached");
           } else {
             this.pageNum++;
-            _fetch();
+            this._fetch();
           }
         }}
   		  onEndReachedThreshold={10}
