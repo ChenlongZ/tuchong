@@ -29,6 +29,7 @@ const deviceWidth = Dimensions.get('window').width
 const deviceHeight = Dimensions.get('window').height;
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+const paddingLeftRight = 3;
 
 export default class TaggedView extends Component {
 
@@ -99,7 +100,6 @@ export default class TaggedView extends Component {
   }
 
   _generateImages() {
-    let paddingLeftRight = 3;
     return (
       <ListView style={styles.content}
         dataSource={this.state.dataSource}
@@ -139,21 +139,17 @@ export default class TaggedView extends Component {
             </View>
           )
         }}
-  		  renderScrollComponent={(props) => <RecyclerViewBackedScrollView {...props} />}
   		  renderSeparator={(sectionID, rowID, adjacentRowHighlighted) => {
           return (<View key={`${sectionID}-${rowID}`}
             style={{width: deviceWidth, height: paddingLeftRight, backgroundColor: 'white'}}/>)
         }}
   		  onEndReached={() => {
-          if(this.pageNum == 0) {
-          } else if (this.pageNum > 10) {
-            alert("Late page reached");
-          } else {
+          if(this.pageNum <= 10) {
             this.pageNum++;
             this._fetch();
           }
         }}
-  		  onEndReachedThreshold={10}
+  		  onEndReachedThreshold={100}
        />
     )
   }
@@ -165,24 +161,12 @@ export default class TaggedView extends Component {
 
   render() {
     return (
-      <ScrollView styles={{flex: 1}}>
-        {/* transparent nav bar with a back button */}
-        {/* TODO: gone when scroll down */}
-
-        {/* thumbnail of the 1st picture (1/3 screen) */}
-        <View style={styles.cover}>
-          <Image source={require('./resources/temp_background.jpg')}/>
-        </View>
-
-        {/* tag name, sub title, hot/new taggle */}
-        <View style={styles.segment}>
-        </View>
-
-        {/* infinte scroll view (max = 10 pages) */}
-        {/* two picture in a row, adjust heigth */}
+      <ScrollView style={{flex: 1}}>
+        <Text>Hello World!</Text>
+        <View style={{backgroundColor: "#F23"}}/>
         {this._generateImages()}
       </ScrollView>
-    )
+      )
   }
 }
 
