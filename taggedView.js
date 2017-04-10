@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Animated,
   View,
   Image,
   Dimensions,
@@ -10,6 +11,9 @@ import {
   Text,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import NavigationBar from 'react-native-navbar';
+
+const AnimatedNavBar = Animated.createAnimatedComponent(NavigationBar);
 
 //tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1&order=new
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
@@ -29,6 +33,7 @@ const deviceWidth = Dimensions.get('window').width
 const deviceHeight = Dimensions.get('window').height;
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+const navBarHeight = new Animated.Value(58);
 
 export default class TaggedView extends Component {
 
@@ -145,10 +150,7 @@ export default class TaggedView extends Component {
             style={{width: deviceWidth, height: paddingLeftRight, backgroundColor: 'white'}}/>)
         }}
   		  onEndReached={() => {
-          if(this.pageNum == 0) {
-          } else if (this.pageNum > 10) {
-            alert("Late page reached");
-          } else {
+          if(this.pageNum <= 10) {
             this.pageNum++;
             this._fetch();
           }
@@ -163,15 +165,35 @@ export default class TaggedView extends Component {
     this._fetch();
   }
 
+  navBarAnim = (close) => {
+      Animated.timing(
+        navBarHeight,
+        {
+          toValue: close ? 0 : 58,
+          duration: 400,
+        }
+      ).start();
+  }
+
   render() {
     return (
-      <ScrollView styles={{flex: 1}}>
+      <ScrollView
+        styles={{flex: 1}}
+        onScroll={(event) => {
+          console.log(event.nativeEvent.contentOffset.y);
+          if (event.nativeEvent.contentOffset.y > 0) {
+            this.navBarAnim(true);
+          } else {
+            this.navBarAnim(false);
+          }
+        }}
+        scrollEventThrottle={200}>
         {/* transparent nav bar with a back button */}
         {/* TODO: gone when scroll down */}
 
         {/* thumbnail of the 1st picture (1/3 screen) */}
         <View style={styles.cover}>
-          <Image source={require('./resources/temp_background.jpg')}/>
+          {/* <Image source={require('./resources/temp_background.jpg')}/> */}
         </View>
 
         {/* tag name, sub title, hot/new taggle */}
@@ -182,6 +204,20 @@ export default class TaggedView extends Component {
         {/* two picture in a row, adjust heigth */}
         {this._generateImages()}
       </ScrollView>
+    )
+  }
+
+  static renderNavigationBar(props) {
+    return (<Animated.View
+      style={{
+        backgroundColor: 'black',
+        paddingTop: 0,
+        top: 0,
+        right: 0,
+        left: 0,
+        position: 'absolute',
+        height: navBarHeight}}>
+    </Animated.View>
     )
   }
 }

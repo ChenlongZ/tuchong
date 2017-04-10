@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Animated,
   AppRegistry,
   View,
   Text,
@@ -33,7 +34,8 @@ class tuchong extends Component {
           <Scene
             key='taggedView'
             component={ TaggedView }
-            navigationBarStyle={{backgroundColor: 'transparent'}}
+            navigationBarStyle={{
+              backgroundColor: 'transparent'}}
             leftButtonIconStyle={{tintColor: 'black'}} />
           <Scene
             key='photoView'
