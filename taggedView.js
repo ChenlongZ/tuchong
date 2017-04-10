@@ -12,8 +12,7 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import NavigationBar from 'react-native-navbar';
-
-const AnimatedNavBar = Animated.createAnimatedComponent(NavigationBar);
+import AnimatedNavBar from './animatedNavBar.js';
 
 //tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1&order=new
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
@@ -208,17 +207,15 @@ export default class TaggedView extends Component {
   }
 
   static renderNavigationBar(props) {
-    return (<Animated.View
-      style={{
-        backgroundColor: 'black',
-        paddingTop: 0,
-        top: 0,
-        right: 0,
-        left: 0,
-        position: 'absolute',
-        height: navBarHeight}}>
-    </Animated.View>
-    )
+    return (<AnimatedNavBar/>);
+      // style={{
+      //   backgroundColor: 'black',
+      //   paddingTop: 0,
+      //   top: 0,
+      //   right: 0,
+      //   left: 0,
+      //   position: 'absolute',
+      //   height: navBarHeight}}>
   }
 }
 
