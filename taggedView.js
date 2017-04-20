@@ -169,7 +169,7 @@ export default class TaggedView extends Component {
         navBarHeight,
         {
           toValue: close ? 0 : 58,
-          duration: 400,
+          duration: 200,
         }
       ).start();
   }
@@ -207,15 +207,15 @@ export default class TaggedView extends Component {
   }
 
   static renderNavigationBar(props) {
-    return (<AnimatedNavBar/>);
-      // style={{
-      //   backgroundColor: 'black',
-      //   paddingTop: 0,
-      //   top: 0,
-      //   right: 0,
-      //   left: 0,
-      //   position: 'absolute',
-      //   height: navBarHeight}}>
+    return (<Animated.View
+      style={{
+        backgroundColor: 'black',
+        paddingTop: 0,
+        top: 0,
+        right: 0,
+        left: 0,
+        position: 'absolute',
+        height: navBarHeight}}/>)
   }
 }
 

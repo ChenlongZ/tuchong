@@ -12,7 +12,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { _drawerImage, _backButtonImage, Actions } from 'react-native-router-flux';
+import Actions from 'react-native-router-flux';
+import _drawerImage from './resources/menu_burger.png';
+import _backButtonImage from './resources/back_chevron.png';
 
 const styles = StyleSheet.create({
   title: {
@@ -151,7 +153,7 @@ export default class AnimatedNavBar extends Component {
     this.renderTitle = this.renderTitle.bind(this);
   }
 
-  renderTitle = (childState, index:number) => {
+  renderTitle = (childState) => {
     let title = this.props.getTitle ? this.props.getTitle(childState) : childState.title;
     if (title === undefined && childState.component && childState.component.title) {
       title = childState.component.title;
@@ -161,52 +163,33 @@ export default class AnimatedNavBar extends Component {
     }
     return (
       <Animated.View
-        key={childState.key}
         style={[
           styles.titleWrapper,
           this.props.titleWrapperStyle,
         ]}
       >
         <Animated.Text
-          lineBreakMode="tail"
-          numberOfLines={1}
-          {...this.props.titleProps}
           style={[
             styles.title,
             this.props.titleStyle,
             this.props.navigationState.titleStyle,
             childState.titleStyle,
-            {
-              opacity: this.props.position.interpolate({
-                inputRange: [index - 1, index, index + 1],
-                outputRange: [0, this.props.titleOpacity, 0],
-              }),
-              left: this.props.position.interpolate({
-                inputRange: [index - 1, index + 1],
-                outputRange: [200, -200],
-              }),
-              right: this.props.position.interpolate({
-                inputRange: [index - 1, index + 1],
-                outputRange: [-200, 200],
-              }),
-            },
           ]}
         >
-          {title}
+          {this.props.component}
         </Animated.Text>
       </Animated.View>
     );
   };
 
-  renderBackButton = () => {
+  renderBackButton = (navProps) => {
     return (
       <TouchableOpacity
         testID="backNavButton"
         style={[
           styles.backButton,
-          this.props.leftButtonIconStyle,
         ]}
-        onPress={Actions.pop}>
+        onPress={() => Actions.pop()}>
         <Image
           source={_backButtonImage}
           style={[
@@ -220,19 +203,19 @@ export default class AnimatedNavBar extends Component {
 
   contents = (
     <View>
-      {this.renderTitle(...this.props)}
-      {this.renderBackButton(navProps)}
+      {this.renderTitle(this.props)}
+      {this.renderBackButton(this.props)}
     </View>
   );
 
   render() {
     return (
-      <Animated.View>
+      <Animated.View
         style={[
           styles.header,
           this.props.navigationBarStyle
         ]}>
-        {contents}
+        {this.contents}
       </Animated.View>
     )
   }
