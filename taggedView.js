@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {
   Animated,
+  ActivityIndicator,
   View,
   Image,
   Dimensions,
@@ -44,15 +45,19 @@ export default class TaggedView extends Component {
     super();
     this.imagePool = [];
     this.pageNum;
-    this.isLoading = false;
     this.state = {
+      isLoading: false,
       hotNew: true, //true for hot
       dataSource: ds.cloneWithRows(this.imagePool)
     }
   }
 
   _fetch() {
-    this.isLoading = true;
+    if (this.pageNum == 1 && !this.state.isLoading) {
+        this.setState({
+          isLoading: true
+      });
+    }
   	fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.state.hotNew?'':'&order=new'}&page=${this.pageNum}`;
     fetch(fetch_url)
     .then((response) => response.json())
@@ -91,9 +96,9 @@ export default class TaggedView extends Component {
          second: result[i + 1],
        });
      }
-     this.isLoading = false;
   	 this.setState({
     	dataSource: ds.cloneWithRows(this.imagePool),
+      isLoading: false,
      });
     })
     .catch((error) => {
@@ -149,6 +154,7 @@ export default class TaggedView extends Component {
             style={{width: deviceWidth, height: paddingLeftRight, backgroundColor: 'white'}}/>)
         }}
   		  onEndReached={() => {
+          console.log(this.pageNum);
           if(this.pageNum <= 10) {
             this.pageNum++;
             this._fetch();
@@ -164,69 +170,34 @@ export default class TaggedView extends Component {
     this._fetch();
   }
 
-  navBarAnim = (close) => {
-      Animated.timing(
-        navBarHeight,
-        {
-          toValue: close ? 0 : 58,
-          duration: 200,
-        }
-      ).start();
-  }
+  // navBarAnim = (close) => {
+  //     Animated.timing(
+  //       navBarHeight,
+  //       {
+  //         toValue: close ? 0 : 58,
+  //         duration: 200,
+  //       }
+  //     ).start();
+  // }
 
   render() {
+    console.log(this.state.isLoading);
     return (
-      <ScrollView
-        styles={{flex: 1}}
-        onScroll={(event) => {
-          console.log(event.nativeEvent.contentOffset.y);
-          if (event.nativeEvent.contentOffset.y > 0) {
-            this.navBarAnim(true);
-          } else {
-            this.navBarAnim(false);
-          }
-        }}
-        scrollEventThrottle={200}>
-        {/* transparent nav bar with a back button */}
-        {/* TODO: gone when scroll down */}
-
-        {/* thumbnail of the 1st picture (1/3 screen) */}
-        <View style={styles.cover}>
-          {/* <Image source={require('./resources/temp_background.jpg')}/> */}
-        </View>
-
-        {/* tag name, sub title, hot/new taggle */}
-        <View style={styles.segment}>
-        </View>
-
-        {/* infinte scroll view (max = 10 pages) */}
-        {/* two picture in a row, adjust heigth */}
-        {this._generateImages()}
-      </ScrollView>
+      this.state.isLoading
+        ? <ActivityIndicator
+            animating={true}
+            size="large"
+            style={styles.loadingIndicator}/>
+        : this._generateImages()
     )
-  }
-
-  static renderNavigationBar(props) {
-    return (<Animated.View
-      style={{
-        backgroundColor: 'black',
-        paddingTop: 0,
-        top: 0,
-        right: 0,
-        left: 0,
-        position: 'absolute',
-        height: navBarHeight}}/>)
   }
 }
 
 const styles = StyleSheet.create({
-  cover: {
-    height: deviceHeight/6,
-  },
-  segment: {
-    height: deviceHeight/8,
-  },
-  content: {
-
-  },
+  loadingIndicator: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+  }
 });
