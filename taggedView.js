@@ -39,17 +39,24 @@ export default class TaggedView extends Component {
 
   static propTypes = {
     tag: React.PropTypes.string.isRequired,
+    hot: React.PropTypes.bool.isRequired,
   }
 
   constructor(props) {
     super();
+    this.hot = true;
     this.imagePool = [];
     this.pageNum;
     this.state = {
       isLoading: false,
-      hotNew: true, //true for hot
       dataSource: ds.cloneWithRows(this.imagePool)
     }
+    setInterval(() => {
+      if (this.hot != this.props.hot) {
+        this.hot = this.props.hot;
+        this.componentDidMount();
+      }
+    }, 200);
   }
 
   _fetch() {
@@ -58,7 +65,7 @@ export default class TaggedView extends Component {
           isLoading: true
       });
     }
-  	fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.state.hotNew?'':'&order=new'}&page=${this.pageNum}`;
+  	fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.props.hot?'':'&order=new'}&page=${this.pageNum}`;
     fetch(fetch_url)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -167,6 +174,11 @@ export default class TaggedView extends Component {
 
   componentDidMount() {
     this.pageNum = 1;
+    this.imagePool = [];
+    this.setState({
+      isLoading: false,
+      dataSource: ds.cloneWithRows(this.imagePool),
+    });
     this._fetch();
   }
 
@@ -181,7 +193,11 @@ export default class TaggedView extends Component {
   // }
 
   render() {
-    console.log(this.state.isLoading);
+    console.log(`${this.props.tag} ${this.props.hot} pageNum=${this.pageNum}`);
+    // if (this.props.hot != this.hot) {
+    //   this.hot = this.props.hot;
+    //   this.componentDidMount();
+    // }
     return (
       this.state.isLoading
         ? <ActivityIndicator

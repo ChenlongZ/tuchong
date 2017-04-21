@@ -66,7 +66,7 @@ export default class Home extends Component {
 
   renderRow(item, sectionID, rowID) {
     return (
-      <TouchableHighlight key={item.key} style={styles.coverView} onPress={() => Actions.taggedView({title: item.tag, tag: item.tag})}>
+      <TouchableHighlight key={item.key} style={styles.coverView} onPress={() => Actions.taggedView({title: item.tag, tag: item.tag, hot: true})}>
         <View>
           <Image style={styles.coverViewImage}
             source={{uri : item.url, width: (width - 40) / 3, height: (width - 40) / 3}}/>
