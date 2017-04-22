@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import {
+  Animated,
+  ActivityIndicator,
   View,
   Image,
   Dimensions,
@@ -10,6 +12,8 @@ import {
   Text,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import NavigationBar from 'react-native-navbar';
+import AnimatedNavBar from './animatedNavBar.js';
 
 //tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1&order=new
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
@@ -35,22 +39,33 @@ export default class TaggedView extends Component {
 
   static propTypes = {
     tag: React.PropTypes.string.isRequired,
+    hot: React.PropTypes.bool.isRequired,
   }
 
   constructor(props) {
     super();
+    this.hot = true;
     this.imagePool = [];
     this.pageNum;
-    this.isLoading = false;
     this.state = {
-      hotNew: true, //true for hot
+      isLoading: false,
       dataSource: ds.cloneWithRows(this.imagePool)
     }
+    setInterval(() => {
+      if (this.hot != this.props.hot) {
+        this.hot = this.props.hot;
+        this.componentDidMount();
+      }
+    }, 200);
   }
 
   _fetch() {
-    this.isLoading = true;
-  	fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.state.hotNew?'':'&order=new'}&page=${this.pageNum}`;
+    if (this.pageNum == 1 && !this.state.isLoading) {
+        this.setState({
+          isLoading: true
+      });
+    }
+  	fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.props.hot?'':'&order=new'}&page=${this.pageNum}`;
     fetch(fetch_url)
     .then((response) => response.json())
     .then((responseJson) => {
@@ -88,9 +103,9 @@ export default class TaggedView extends Component {
          second: result[i + 1],
        });
      }
-     this.isLoading = false;
   	 this.setState({
     	dataSource: ds.cloneWithRows(this.imagePool),
+      isLoading: false,
      });
     })
     .catch((error) => {
@@ -156,28 +171,46 @@ export default class TaggedView extends Component {
 
   componentDidMount() {
     this.pageNum = 1;
+    this.imagePool = [];
+    this.setState({
+      isLoading: false,
+      dataSource: ds.cloneWithRows(this.imagePool),
+    });
     this._fetch();
   }
 
+  // navBarAnim = (close) => {
+  //     Animated.timing(
+  //       navBarHeight,
+  //       {
+  //         toValue: close ? 0 : 58,
+  //         duration: 200,
+  //       }
+  //     ).start();
+  // }
+
   render() {
+    console.log(`${this.props.tag} ${this.props.hot} pageNum=${this.pageNum}`);
+    // if (this.props.hot != this.hot) {
+    //   this.hot = this.props.hot;
+    //   this.componentDidMount();
+    // }
     return (
-      <ScrollView style={{flex: 1}}>
-        <Text>Hello World!</Text>
-        <View style={{backgroundColor: "#F23"}}/>
-        {this._generateImages()}
-      </ScrollView>
-      )
+      this.state.isLoading
+        ? <ActivityIndicator
+            animating={true}
+            size="large"
+            style={styles.loadingIndicator}/>
+        : this._generateImages()
+    )
   }
 }
 
 const styles = StyleSheet.create({
-  cover: {
-    height: deviceHeight/6,
-  },
-  segment: {
-    height: deviceHeight/8,
-  },
-  content: {
-
-  },
+  loadingIndicator: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+  }
 });

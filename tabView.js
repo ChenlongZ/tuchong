@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import {
+  Animated,
   View,
   Image,
   Text,
@@ -37,7 +38,7 @@ export default class TabView extends Component {
 	  loading: false,
 	  loadmore: false,
       dataSource: ds.cloneWithRows(this.imagePool),
-	  deviceWidth: Dimensions.get('window').width, 
+	  deviceWidth: Dimensions.get('window').width,
 	};
   }
 
@@ -51,7 +52,7 @@ export default class TabView extends Component {
 	this.pageNum = 1;
 	this._fetchImage();
   }
-  
+
   _fetchImage() {
   	this.setState({
   		loading: true,

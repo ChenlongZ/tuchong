@@ -33,7 +33,10 @@ class tuchong extends Component {
           <Scene
             key='taggedView'
             component={ TaggedView }
-            navigationBarStyle={{backgroundColor: 'transparent'}}
+            navigationBarStyle={{
+              backgroundColor: 'transparent',
+              borderBottomWidth: 0,
+            }}
             leftButtonIconStyle={{tintColor: 'black'}} />
           <Scene
             key='photoView'
