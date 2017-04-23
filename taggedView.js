@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import {
-  Animated,
   ActivityIndicator,
   View,
   Image,
   Dimensions,
-  ScrollView,
   ListView,
-  RecyclerViewBackedScrollView,
+  TouchableHighlight,
   StyleSheet,
   Text,
 } from 'react-native';
@@ -46,30 +44,33 @@ export default class TaggedView extends Component {
     super();
     this.hot = true;
     this.imagePool = [];
-    this.pageNum;
+    this.pageNum = 0;
     this.state = {
       isLoading: false,
-      dataSource: ds.cloneWithRows(this.imagePool)
+      dataSource: ds.cloneWithRows(this.imagePool, null)
     }
     setInterval(() => {
-      if (this.hot != this.props.hot) {
+      if (this.hot !== this.props.hot) {
         this.hot = this.props.hot;
         this.componentDidMount();
       }
     }, 200);
+
+    this._generateImages.bind(this);
+    this._generateRowItems.bind(this);
   }
 
   _fetch() {
-    if (this.pageNum == 1 && !this.state.isLoading) {
+    if (this.pageNum === 1 && !this.state.isLoading) {
         this.setState({
           isLoading: true
       });
     }
-  	fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.props.hot?'':'&order=new'}&page=${this.pageNum}`;
+  	let fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.props.hot?'':'&order=new'}&page=${this.pageNum}`;
     fetch(fetch_url)
     .then((response) => response.json())
     .then((responseJson) => {
-      result = responseJson.postList.map((elem, index) => {
+      let result = responseJson.postList.map((elem, index) => {
         var feed = {};
         feed.title = elem.title;
         feed.coverImageGridUrl = elem.cover_image_src;
@@ -96,15 +97,15 @@ export default class TaggedView extends Component {
     	  return feed;
   	 });
      result = result.filter((val) => val !== undefined);
-     if (result.length % 2 != 0) result.pop();
-     for (i = 0; i < result.length; i+=2) {
+     if (result.length % 2 !== 0) result.pop();
+     for (let i = 0; i < result.length; i+=2) {
        this.imagePool.push({
          first: result[i],
          second: result[i + 1],
        });
      }
   	 this.setState({
-    	dataSource: ds.cloneWithRows(this.imagePool),
+    	dataSource: ds.cloneWithRows(this.imagePool, null),
       isLoading: false,
      });
     })
@@ -114,47 +115,54 @@ export default class TaggedView extends Component {
     });
   }
 
+   _generateRowItems(data) {
+      return(
+          <TouchableHighlight
+              style={{paddingRight: paddingLeftRight / 2}}
+              onPress={() => Actions.photoView({title: data.title, data: data})}
+          >
+              <View style={{ width: data.Width, height: data.Height }}>
+                  <Image source={{
+                      uri: data.coverImageMediumUrl,
+                      width: data.Width,
+                      height: data.Height }}/>
+                  {data.postImages.length > 1
+                      ?<View style={styles.imageSetSize}>
+                          <Text style={{color: 'rgba(255, 255, 255, 0.8)', fontSize: 14}}>{data.postImages.length}</Text>
+                      </View>
+                      :null}
+              </View>
+          </TouchableHighlight>
+      )
+  }
   _generateImages() {
     return (
       <ListView style={styles.content}
         dataSource={this.state.dataSource}
         renderRow={(rowData, sectionID, rowID, highlightRow) => {
-          let rowWidth = deviceWidth;
-          let rowHeight = (rowWidth - 3 * paddingLeftRight) * rowData.first.coverImageAR * rowData.second.coverImageAR / (rowData.first.coverImageAR + rowData.second.coverImageAR);
+          let rowHeight = (deviceWidth - 3 * paddingLeftRight) * rowData.first.coverImageAR * rowData.second.coverImageAR / (rowData.first.coverImageAR + rowData.second.coverImageAR);
           let firstItemWidth = rowHeight / rowData.first.coverImageAR + paddingLeftRight / 2;
-          let firstItemHeight = rowHeight;
           let secondItemWidth = rowHeight / rowData.second.coverImageAR + paddingLeftRight / 2;
-          let secondItemHeight = rowHeight;
           let firstImgWidth = firstItemWidth - paddingLeftRight / 2;
           let firstImgHeight = rowHeight;
           let secondImgWidth = secondItemWidth - paddingLeftRight / 2;
           let secondImgHeight = rowHeight;
+          rowData.first.Width = firstImgWidth;
+          rowData.first.Height = firstImgHeight;
+          rowData.second.Width = secondImgWidth;
+          rowData.second.Height = secondImgHeight;
           return (
             <View key={rowID} style={{
               flexDirection: 'row',
               paddingLeft: paddingLeftRight,
               paddingRight: paddingLeftRight,
             }}>
-              <View style={{
-                paddingRight: paddingLeftRight / 2,
-              }}>
-                <Image source={{
-                  uri: rowData.first.coverImageMediumUrl,
-                  width: firstImgWidth,
-                  height: firstImgHeight }}/>
-              </View>
-              <View style={{
-                paddingLeft: paddingLeftRight / 2,
-              }}>
-                <Image source={{
-                  uri: rowData.second.coverImageMediumUrl,
-                  width: secondImgWidth,
-                  height: secondImgHeight }}/>
-              </View>
+                {this._generateRowItems(rowData.first)}
+                {this._generateRowItems(rowData.second)}
             </View>
           )
         }}
-  		  renderSeparator={(sectionID, rowID, adjacentRowHighlighted) => {
+  		  renderSeparator={(sectionID, rowID) => {
           return (<View key={`${sectionID}-${rowID}`}
             style={{width: deviceWidth, height: paddingLeftRight, backgroundColor: 'white'}}/>)
         }}
@@ -212,5 +220,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 8,
-  }
+  },
+    imageSetSize: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 5,
+        marginBottom: 5,
+        width: 20,
+        height: 20,
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.24)'
+    }
 });

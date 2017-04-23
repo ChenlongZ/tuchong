@@ -3,6 +3,10 @@ import { View, Text } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
 export default class PageOne extends Component {
+
+    static propTypes = {
+        data: React.PropTypes.any.isRequired,
+    }
   render() {
     return (
       <View style={{backgroundColor: 'black', flex: 1}}>
