@@ -52,17 +52,18 @@ export default class extends Component {
         // feed.coverImageAR = feed.postImages[0].ar;
         return(
             this.props.data.postImages.map((elem, index, array) => {
+                // TODO: the adjusted image width and height seem not working
                 let imgWidth = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT / elem.ar : PHOTOVIEW_WIDTH;
                 let imgHeight = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT : PHOTOVIEW_WIDTH * elem.ar;
                 return(
                   <PhotoView
                       key={index}
-                      style={{height: imgHeight, width: imgWidth}}
-                      source={{uri: elem.url}}
+                      style={{height: PHOTOVIEW_HEIGHT, width: PHOTOVIEW_WIDTH, backgroundColor: 'black'}}
+                      source={{uri: elem.url, height: imgHeight, width: imgWidth}}
                       minimumZoomScale={0.5}
                       maximumZoomScale={3}
                       androidScaleType="center"
-                      loadingIndicatorSource={
+                      loadingIndicatorSource={ // TODO: not work
                           <ActivityIndicator
                               animating={true}
                               color='#ffd939'
@@ -80,7 +81,16 @@ export default class extends Component {
             <View style={styles.overall}>
                 <View style={styles.occupySpace}/>
                 <Swiper style={styles.swiper}
-                    showsPagination={true} >
+                    showsButtons={false}
+                    autoplay={false}
+                    activeDot={ // TODO: not showing
+                        <View style={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                            width: 8,
+                            height: 8,
+                            borderRadius: 4,
+                            margin: 3,
+                            }} />}>
                     {this._generatePhotos()}
                 </Swiper>
                 <View style={styles.bottomBar}>
@@ -92,9 +102,6 @@ export default class extends Component {
 }
 
 const styles = StyleSheet.create({
-    overall: {
-        flex: 1,
-    },
     occupySpace: {
         ...Platform.select({
             ios: {
@@ -116,6 +123,6 @@ const styles = StyleSheet.create({
         height: BOTTOM_BAR_HEIGHT,
         backgroundColor: 'black',
         borderTopColor: 'white',
-        borderTopWidth: 5,
+        borderTopWidth: 2,
     },
 });
