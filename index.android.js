@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
     Animated,
     AppRegistry,
@@ -7,7 +7,7 @@ import {
     StatusBar,
     View,
 } from "react-native";
-import { Actions, ActionConst, Router, Scene, Modal } from 'react-native-router-flux';
+import {Actions, ActionConst, Router, Scene, Modal} from 'react-native-router-flux';
 
 import Home from './home.js';
 import TaggedView from './taggedView.js';
@@ -34,7 +34,7 @@ class tuchong extends Component {
                         key='home'
                         component={ Home }
                         title='图虫'
-                        initial={ true } />
+                        initial={ true }/>
                     <Scene
                         key='taggedView'
                         component={ TaggedView }
@@ -65,9 +65,9 @@ class tuchong extends Component {
                                 }}
                                 onPress={() => {
                                     this.setState({
-                                        hot:!this.state.hot
+                                        hot: !this.state.hot
                                     });
-                                    Actions.taggedView({type:ActionConst.REFRESH, hot: this.state.hot});
+                                    Actions.taggedView({type: ActionConst.REFRESH, hot: this.state.hot});
                                 }}>
                                 <Text style={{
                                     color: 'rgba(255, 255, 255, 0.8)',
@@ -81,11 +81,12 @@ class tuchong extends Component {
                         key='photoView'
                         component={ PhotoView }
                         navigationBarStyle={{
-                            backgroundColor: 'transparent',
-                            borderBottomWidth: 0,
+                            backgroundColor: 'black',
+                            borderBottomColor: 'white',
+                            borderBottomWidth: 2,
                         }}
                         titleStyle={{
-                            color: 'rgba(255, 255, 255, 0.8)',
+                            color: 'rgba(255, 255, 255, 0.9)',
                             fontWeight: '500',
                         }}
                         leftButtonIconStyle={{
@@ -100,35 +101,3 @@ class tuchong extends Component {
 }
 
 AppRegistry.registerComponent('tuchong', () => tuchong);
-// import React, { Component } from 'react';
-// import {
-//   AppRegistry,
-//   View,
-//   Text,
-//   StatusBar,
-// } from "react-native";
-//
-// import MainView from "./main.js"; // you can rename the exported if it's a default export
-// import {Main} from "./main.js";   // or you have to use {exact name} if it's a name export
-//
-// export default class tuchong extends Component {
-//   constructor() {
-//     super();
-//     this.state = {
-//       tabs: ["风光", "人像", "纪实", "建筑", "旅行", "少女", "人文", "街拍", "夜景", "静物", "私房"],
-//     }
-//   }
-//
-//   _setStatusBar() {
-//     StatusBar.setHidden(true, "fade");
-//   }
-//
-//   render() {
-//     this._setStatusBar();
-//     return (
-//       <MainView tabs={this.state.tabs}/>
-//     );
-//   }
-// }
-//
-// AppRegistry.registerComponent('tuchong', () => tuchong);

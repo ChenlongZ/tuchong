@@ -65921,7 +65921,7 @@ ReactNative.I18nManager,Image=ReactNative.Image,Platform=ReactNative.Platform,St
 
 var NavigationHeaderBackButton=function NavigationHeaderBackButton(props){return(
 React.createElement(TouchableOpacity,{style:styles.buttonContainer,onPress:props.onPress},
-React.createElement(Image,{style:styles.button,source:require(380 /* ./assets/back-icon.png */)})));};
+React.createElement(Image,{style:styles.button,source:require(480 /* ./assets/back-icon.png */)})));};
 
 
 
@@ -65948,7 +65948,7 @@ transform:[{scaleX:I18nManager.isRTL?-1:1}]}});
 module.exports=NavigationHeaderBackButton;
 }, 379, null, "NavigationHeaderBackButton");
 __d(/* react-native/Libraries/CustomComponents/NavigationExperimental/assets/back-icon.png */function(global, require, module, exports) {module.exports = require(172 /* react-native/Libraries/Image/AssetRegistry */).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/node_modules/react-native/Libraries/CustomComponents/NavigationExperimental/assets","width":24,"height":24,"scales":[1,1.5,2,3,4],"hash":"a364dc7a784101f7c8f6791c7b4514ce","name":"back-icon","type":"png"});
-}, 380, null, "react-native/Libraries/CustomComponents/NavigationExperimental/assets/back-icon.png");
+}, 480, null, "react-native/Libraries/CustomComponents/NavigationExperimental/assets/back-icon.png");
 __d(/* NavigationHeaderStyleInterpolator */function(global, require, module, exports) {
 
 
@@ -71426,7 +71426,7 @@ ReactNative.Image,Platform=ReactNative.Platform,StyleSheet=ReactNative.StyleShee
 
 var NavigationHeaderBackButton=function NavigationHeaderBackButton(props){return(
 React.createElement(TouchableOpacity,{style:styles.buttonContainer,onPress:function onPress(){return props.onNavigate(NavigationRootContainer.getBackAction());}},
-React.createElement(Image,{style:styles.button,source:require(426 /* ./assets/back.png */)})));};
+React.createElement(Image,{style:styles.button,source:require(481 /* ./assets/back.png */)})));};
 
 
 
@@ -71452,7 +71452,7 @@ resizeMode:'contain'}});
 module.exports=NavigationContainer.create(NavigationHeaderBackButton);
 }, 425, null, "react-native-experimental-navigation/NavigationHeaderBackButton.js");
 __d(/* react-native-experimental-navigation/assets/back.png */function(global, require, module, exports) {module.exports = require(172 /* react-native/Libraries/Image/AssetRegistry */).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/node_modules/react-native-experimental-navigation/assets","width":24,"height":24,"scales":[1,1.5,2,3,4],"hash":"a364dc7a784101f7c8f6791c7b4514ce","name":"back","type":"png"});
-}, 426, null, "react-native-experimental-navigation/assets/back.png");
+}, 481, null, "react-native-experimental-navigation/assets/back.png");
 __d(/* react-native-experimental-navigation/NavigationHeaderStyleInterpolator.js */function(global, require, module, exports) {
 
 
@@ -73719,7 +73719,8 @@ Home=function(_Component){babelHelpers.inherits(Home,_Component);function Home()
 
 item,sectionID,rowID){
 return(
-_react2.default.createElement(_reactNative.TouchableHighlight,{key:item.key,style:styles.coverView,onPress:function onPress(){return _reactNativeRouterFlux.Actions.taggedView({title:item.tag,tag:item.tag,hot:true});}},
+_react2.default.createElement(_reactNative.TouchableHighlight,{key:item.key,style:styles.coverView,
+onPress:function onPress(){return _reactNativeRouterFlux.Actions.taggedView({title:item.tag,tag:item.tag,hot:true});}},
 _react2.default.createElement(_reactNative.View,null,
 _react2.default.createElement(_reactNative.Image,{style:styles.coverViewImage,
 source:{uri:item.url,width:(width-40)/3,height:(width-40)/3}}),
@@ -73833,8 +73834,6 @@ width:(width-40)/3,
 height:(width-40)/3+3},
 
 coverViewImage:{},
-
-
 coverViewText:{
 flexDirection:'row',
 justifyContent:'center',
@@ -74977,7 +74976,10 @@ if(_this.hot!==_this.props.hot){
 _this.hot=_this.props.hot;
 _this.componentDidMount();
 }
-},200);return _this;
+},200);
+
+_this._generateImages.bind(_this);
+_this._generateRowItems.bind(_this);return _this;
 }babelHelpers.createClass(TaggedView,[{key:'_fetch',value:function _fetch()
 
 {var _this2=this;
@@ -75033,6 +75035,30 @@ catch(function(error){
 
 alert("Hahaha, 404 not found!");
 });
+}},{key:'_generateRowItems',value:function _generateRowItems(
+
+data){
+return(
+_react2.default.createElement(_reactNative.TouchableHighlight,{
+style:{paddingRight:paddingLeftRight/2},
+onPress:function onPress(){return _reactNativeRouterFlux.Actions.photoView({title:data.title,data:data});}},
+_react2.default.createElement(_reactNative.View,{style:{width:data.Width,height:data.Height}},
+_react2.default.createElement(_reactNative.Image,{source:{
+uri:data.coverImageMediumUrl,
+width:data.Width,
+height:data.Height}}),
+
+data.postImages.length>1?
+_react2.default.createElement(_reactNative.View,{style:styles.imageSetSize},
+_react2.default.createElement(_reactNative.Text,{style:{
+color:'rgba(255, 255, 255, 0.8)',
+fontSize:14}},
+data.postImages.length)):
+
+null)));
+
+
+
 }},{key:'_generateImages',value:function _generateImages()
 
 {var _this3=this;
@@ -75040,57 +75066,35 @@ return(
 _react2.default.createElement(_reactNative.ListView,{style:styles.content,
 dataSource:this.state.dataSource,
 renderRow:function renderRow(rowData,sectionID,rowID,highlightRow){
-var rowWidth=deviceWidth;
-var rowHeight=(rowWidth-3*paddingLeftRight)*rowData.first.coverImageAR*rowData.second.coverImageAR/(rowData.first.coverImageAR+rowData.second.coverImageAR);
+var rowHeight=(deviceWidth-3*paddingLeftRight)*rowData.first.coverImageAR*rowData.second.coverImageAR/(rowData.first.coverImageAR+rowData.second.coverImageAR);
 var firstItemWidth=rowHeight/rowData.first.coverImageAR+paddingLeftRight/2;
-var firstItemHeight=rowHeight;
 var secondItemWidth=rowHeight/rowData.second.coverImageAR+paddingLeftRight/2;
-var secondItemHeight=rowHeight;
 var firstImgWidth=firstItemWidth-paddingLeftRight/2;
 var firstImgHeight=rowHeight;
 var secondImgWidth=secondItemWidth-paddingLeftRight/2;
 var secondImgHeight=rowHeight;
+rowData.first.Width=firstImgWidth;
+rowData.first.Height=firstImgHeight;
+rowData.second.Width=secondImgWidth;
+rowData.second.Height=secondImgHeight;
 return(
 _react2.default.createElement(_reactNative.View,{key:rowID,style:{
 flexDirection:'row',
 paddingLeft:paddingLeftRight,
 paddingRight:paddingLeftRight}},
 
-_react2.default.createElement(_reactNative.TouchableHighlight,{style:{
-paddingRight:paddingLeftRight/2}},
-
-_react2.default.createElement(_reactNative.View,{style:{width:firstImgWidth,height:firstImgHeight}},
-_react2.default.createElement(_reactNative.View,{style:{
-position:'absolute',
-top:0,
-right:firstImgWidth,
-width:20,
-height:20}},
-
-_react2.default.createElement(_reactNative.Text,{style:{color:'white',fontSize:12}},'H')),
-
-_react2.default.createElement(_reactNative.Image,{source:{
-uri:rowData.first.coverImageMediumUrl,
-width:firstImgWidth,
-height:firstImgHeight}}))),
-
-
-_react2.default.createElement(_reactNative.TouchableHighlight,{style:{
-paddingLeft:paddingLeftRight/2}},
-
-_react2.default.createElement(_reactNative.View,{style:{width:secondImgWidth,height:secondImgHeight}},
-_react2.default.createElement(_reactNative.Image,{source:{
-uri:rowData.second.coverImageMediumUrl,
-width:secondImgWidth,
-height:secondImgHeight}})))));
-
-
+_this3._generateRowItems(rowData.first),
+_this3._generateRowItems(rowData.second)));
 
 
 },
-renderSeparator:function renderSeparator(sectionID,rowID,adjacentRowHighlighted){
+renderSeparator:function renderSeparator(sectionID,rowID){
 return _react2.default.createElement(_reactNative.View,{key:sectionID+'-'+rowID,
-style:{width:deviceWidth,height:paddingLeftRight,backgroundColor:'white'}});
+style:{
+width:deviceWidth,
+height:paddingLeftRight,
+backgroundColor:'white'}});
+
 },
 onEndReached:function onEndReached(){
 if(_this3.pageNum<=10){
@@ -75145,7 +75149,20 @@ loadingIndicator:{
 flex:1,
 alignItems:'center',
 justifyContent:'center',
-padding:8}});
+padding:8},
+
+imageSetSize:{
+flexDirection:'row',
+justifyContent:'center',
+alignItems:'center',
+marginRight:5,
+marginBottom:5,
+width:20,
+height:20,
+position:'absolute',
+bottom:0,
+right:0,
+backgroundColor:'rgba(0, 0, 0, 0.24)'}});
 }, 468, null, "tuchong/taggedView.js");
 __d(/* react-native-navbar/index.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
 var _reactNative=require(42 /* react-native */);
@@ -75640,24 +75657,829 @@ __d(/* tuchong/resources/back_chevron.png */function(global, require, module, ex
 }, 474, null, "tuchong/resources/back_chevron.png");
 __d(/* tuchong/photoView.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
 var _reactNative=require(42 /* react-native */);
-var _reactNativeRouterFlux=require(399 /* react-native-router-flux */);var
 
-PageOne=function(_Component){babelHelpers.inherits(PageOne,_Component);function PageOne(){babelHelpers.classCallCheck(this,PageOne);return babelHelpers.possibleConstructorReturn(this,(PageOne.__proto__||Object.getPrototypeOf(PageOne)).apply(this,arguments));}babelHelpers.createClass(PageOne,[{key:'render',value:function render()
+
+
+
+
+
+var _reactNativeRouterFlux=require(399 /* react-native-router-flux */);
+var _reactNativeSwiper=require(476 /* react-native-swiper */);var _reactNativeSwiper2=babelHelpers.interopRequireDefault(_reactNativeSwiper);
+var _reactNativePhotoView=require(478 /* react-native-photo-view */);var _reactNativePhotoView2=babelHelpers.interopRequireDefault(_reactNativePhotoView);var
+
+PageOne=function(_Component){babelHelpers.inherits(PageOne,_Component);
+
+
+
+
+
+function PageOne(props){babelHelpers.classCallCheck(this,PageOne);var _this=babelHelpers.possibleConstructorReturn(this,(PageOne.__proto__||Object.getPrototypeOf(PageOne)).call(this,
+props));
+_this._generatePhotos.bind(_this);return _this;
+}babelHelpers.createClass(PageOne,[{key:'_generatePhotos',value:function _generatePhotos()
+
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+return(
+this.props.data.postImages.map(function(elem,index,array){
+return(
+_react2.default.createElement(_reactNativePhotoView2.default,{
+key:index,
+source:{uri:elem.url},
+minimumZoomScale:0.5,
+maximumZoomScale:3,
+androidScaleType:'center',
+loadingIndicatorSource:
+_react2.default.createElement(_reactNative.ActivityIndicator,{
+animating:true,
+color:'#ffd939',
+size:75}),
+
+onTap:function onTap(){_reactNativeRouterFlux.Actions.pop();}}));
+
+
+}));
+
+}},{key:'render',value:function render()
+
+{
+return(
+_react2.default.createElement(_reactNative.View,{style:styles.overall},
+_react2.default.createElement(_reactNativeSwiper2.default,{style:styles.swiper,
+showsPagination:true},
+this._generatePhotos()),
+
+_react2.default.createElement(_reactNative.View,{style:styles.bottomBar})));
+
+
+
+
+}}]);return PageOne;}(_react.Component);PageOne.propTypes={data:_react2.default.PropTypes.any.isRequired};exports.default=PageOne;
+
+
+var styles=_reactNative.StyleSheet.create({
+overall:{
+flex:1},
+
+swiper:babelHelpers.extends({
+position:'absolute'},
+_reactNative.Platform.select({
+ios:{
+top:64},
+
+android:{
+top:54}}),{
+
+
+left:0,
+right:0,
+bottom:100,
+backgroundColor:'black'}),
+
+bottomBar:{
+height:100,
+backgroundColor:'white'}});
+}, 475, null, "tuchong/photoView.js");
+__d(/* react-native-swiper/index.js */function(global, require, module, exports) {var _src=require(477 /* ./src/ */);var _src2=babelHelpers.interopRequireDefault(_src);
+module.exports=_src2.default;
+}, 476, null, "react-native-swiper/index.js");
+__d(/* react-native-swiper/src/index.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});
+
+
+
+var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
+var _reactNative=require(42 /* react-native */);var _Dimensions$get=
+
+
+
+
+
+
+
+
+
+
+_reactNative.Dimensions.get('window'),width=_Dimensions$get.width,height=_Dimensions$get.height;
+
+
+
+
+
+var styles={
+container:{
+backgroundColor:'transparent',
+position:'relative'},
+
+
+wrapper:{
+backgroundColor:'transparent'},
+
+
+slide:{
+backgroundColor:'transparent'},
+
+
+pagination_x:{
+position:'absolute',
+bottom:25,
+left:0,
+right:0,
+flexDirection:'row',
+flex:1,
+justifyContent:'center',
+alignItems:'center',
+backgroundColor:'transparent'},
+
+
+pagination_y:{
+position:'absolute',
+right:15,
+top:0,
+bottom:0,
+flexDirection:'column',
+flex:1,
+justifyContent:'center',
+alignItems:'center',
+backgroundColor:'transparent'},
+
+
+title:{
+height:30,
+justifyContent:'center',
+position:'absolute',
+paddingLeft:10,
+bottom:-30,
+left:0,
+flexWrap:'nowrap',
+width:250,
+backgroundColor:'transparent'},
+
+
+buttonWrapper:{
+backgroundColor:'transparent',
+flexDirection:'row',
+position:'absolute',
+top:0,
+left:0,
+flex:1,
+paddingHorizontal:10,
+paddingVertical:10,
+justifyContent:'space-between',
+alignItems:'center'},
+
+
+buttonText:{
+fontSize:50,
+color:'#007aff',
+fontFamily:'Arial'}};var _class=function(_Component){babelHelpers.inherits(_class,_Component);function _class(){var _ref;var _temp,_this,_ret;babelHelpers.classCallCheck(this,_class);for(var _len=arguments.length,args=Array(_len),_key=0;_key<_len;_key++){args[_key]=arguments[_key];}return _ret=(_temp=(_this=babelHelpers.possibleConstructorReturn(this,(_ref=_class.__proto__||Object.getPrototypeOf(_class)).call.apply(_ref,[this].concat(args))),_this),_this.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+state=_this.initState(_this.props,true),_this.
+
+
+
+
+
+autoplayTimer=null,_this.
+loopJumpTimer=null,_this.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+loopJump=function(){
+if(!_this.state.loopJump)return;
+var i=_this.state.index+(_this.props.loop?1:0);
+var scrollView=_this.refs.scrollView;
+_this.loopJumpTimer=setTimeout(function(){return scrollView.setPageWithoutAnimation&&
+scrollView.setPageWithoutAnimation(i);},50);
+},_this.
+
+
+
+
+autoplay=function(){
+if(!Array.isArray(_this.props.children)||
+!_this.props.autoplay||
+_this.internals.isScrolling||
+_this.state.autoplayEnd)return;
+
+_this.autoplayTimer&&clearTimeout(_this.autoplayTimer);
+_this.autoplayTimer=setTimeout(function(){
+if(!_this.props.loop&&(
+_this.props.autoplayDirection?
+_this.state.index===_this.state.total-1:
+_this.state.index===0))
+
+return _this.setState({autoplayEnd:true});
+
+_this.scrollBy(_this.props.autoplayDirection?1:-1);
+},_this.props.autoplayTimeout*1000);
+},_this.
+
+
+
+
+
+onScrollBegin=function(e){
+
+_this.internals.isScrolling=true;
+_this.props.onScrollBeginDrag&&_this.props.onScrollBeginDrag(e,_this.fullState(),_this);
+},_this.
+
+
+
+
+
+onScrollEnd=function(e){
+
+_this.internals.isScrolling=false;
+
+
+if(!e.nativeEvent.contentOffset){
+if(_this.state.dir==='x'){
+e.nativeEvent.contentOffset={x:e.nativeEvent.position*_this.state.width};
+}else{
+e.nativeEvent.contentOffset={y:e.nativeEvent.position*_this.state.height};
+}
+}
+
+_this.updateIndex(e.nativeEvent.contentOffset,_this.state.dir,function(){
+_this.autoplay();
+_this.loopJump();
+
+
+_this.props.onMomentumScrollEnd&&_this.props.onMomentumScrollEnd(e,_this.fullState(),_this);
+});
+},_this.
+
+
+
+
+
+onScrollEndDrag=function(e){var
+contentOffset=e.nativeEvent.contentOffset;var _this$props=
+_this.props,horizontal=_this$props.horizontal,children=_this$props.children;var
+index=_this.state.index;var
+offset=_this.internals.offset;
+var previousOffset=horizontal?offset.x:offset.y;
+var newOffset=horizontal?contentOffset.x:contentOffset.y;
+
+if(previousOffset===newOffset&&(
+index===0||index===children.length-1)){
+_this.internals.isScrolling=false;
+}
+},_this.
+
+
+
+
+
+
+updateIndex=function(offset,dir,cb){
+var state=_this.state;
+var index=state.index;
+var diff=offset[dir]-_this.internals.offset[dir];
+var step=dir==='x'?state.width:state.height;
+var loopJump=false;
+
+
+if(!diff)return;
+
+
+
+
+index=parseInt(index+Math.round(diff/step));
+
+if(_this.props.loop){
+if(index<=-1){
+index=state.total-1;
+offset[dir]=step*state.total;
+loopJump=true;
+}else if(index>=state.total){
+index=0;
+offset[dir]=step;
+loopJump=true;
+}
+}
+
+var newState={};
+newState.index=index;
+newState.loopJump=loopJump;
+
+_this.internals.offset=offset;
+
+
+if(loopJump){
+
+
+
+
+
+if(offset[dir]===_this.state.offset[dir]){
+newState.offset={x:0,y:0};
+newState.offset[dir]=offset[dir]+1;
+_this.setState(newState,function(){
+_this.setState({offset:offset},cb);
+});
+}else{
+newState.offset=offset;
+_this.setState(newState,cb);
+}
+}else{
+_this.setState(newState,cb);
+}
+},_this.
+
+
+
+
+
+
+
+scrollBy=function(index){var animated=arguments.length>1&&arguments[1]!==undefined?arguments[1]:true;
+if(_this.internals.isScrolling||_this.state.total<2)return;
+var state=_this.state;
+var diff=(_this.props.loop?1:0)+index+_this.state.index;
+var x=0;
+var y=0;
+if(state.dir==='x')x=diff*state.width;
+if(state.dir==='y')y=diff*state.height;
+
+if(_reactNative.Platform.OS==='android'){
+_this.refs.scrollView&&_this.refs.scrollView[animated?'setPage':'setPageWithoutAnimation'](diff);
+}else{
+_this.refs.scrollView&&_this.refs.scrollView.scrollTo({x:x,y:y,animated:animated});
+}
+
+
+_this.internals.isScrolling=true;
+_this.setState({
+autoplayEnd:false});
+
+
+
+if(!animated||_reactNative.Platform.OS==='android'){
+setImmediate(function(){
+_this.onScrollEnd({
+nativeEvent:{
+position:diff}});
+
+
+});
+}
+},_this.
+
+scrollViewPropOverrides=function(){
+var props=_this.props;
+var overrides={};
+
+
+
+
+
+
+
+
+
+
+
+for(var prop in props){
+
+if(typeof props[prop]==='function'&&
+prop!=='onMomentumScrollEnd'&&
+prop!=='renderPagination'&&
+prop!=='onScrollBeginDrag')
+{(function(){
+var originResponder=props[prop];
+overrides[prop]=function(e){return originResponder(e,_this.fullState(),_this);};})();
+}
+}
+
+return overrides;
+},_this.
+
+
+
+
+
+renderPagination=function(){
+
+if(_this.state.total<=1)return null;
+
+var dots=[];
+var ActiveDot=_this.props.activeDot||_react2.default.createElement(_reactNative.View,{style:[{
+backgroundColor:_this.props.activeDotColor||'#007aff',
+width:8,
+height:8,
+borderRadius:4,
+marginLeft:3,
+marginRight:3,
+marginTop:3,
+marginBottom:3},
+_this.props.activeDotStyle]});
+var Dot=_this.props.dot||_react2.default.createElement(_reactNative.View,{style:[{
+backgroundColor:_this.props.dotColor||'rgba(0,0,0,.2)',
+width:8,
+height:8,
+borderRadius:4,
+marginLeft:3,
+marginRight:3,
+marginTop:3,
+marginBottom:3},
+_this.props.dotStyle]});
+for(var i=0;i<_this.state.total;i++){
+dots.push(i===_this.state.index?
+_react2.default.cloneElement(ActiveDot,{key:i}):
+_react2.default.cloneElement(Dot,{key:i}));
+
+}
+
+return(
+_react2.default.createElement(_reactNative.View,{pointerEvents:'none',style:[styles['pagination_'+_this.state.dir],_this.props.paginationStyle]},
+dots));
+
+
+},_this.
+
+renderTitle=function(){
+var child=_this.props.children[_this.state.index];
+var title=child&&child.props&&child.props.title;
+return title?
+_react2.default.createElement(_reactNative.View,{style:styles.title},
+_this.props.children[_this.state.index].props.title):
+
+null;
+},_this.
+
+renderNextButton=function(){
+var button=null;
+
+if(_this.props.loop||
+_this.state.index!==_this.state.total-1){
+button=_this.props.nextButton||_react2.default.createElement(_reactNative.Text,{style:styles.buttonText},'\u203A');
+}
+
+return(
+_react2.default.createElement(_reactNative.TouchableOpacity,{onPress:function onPress(){return button!==null&&_this.scrollBy(1);}},
+_react2.default.createElement(_reactNative.View,null,
+button)));
+
+
+
+},_this.
+
+renderPrevButton=function(){
+var button=null;
+
+if(_this.props.loop||_this.state.index!==0){
+button=_this.props.prevButton||_react2.default.createElement(_reactNative.Text,{style:styles.buttonText},'\u2039');
+}
+
+return(
+_react2.default.createElement(_reactNative.TouchableOpacity,{onPress:function onPress(){return button!==null&&_this.scrollBy(-1);}},
+_react2.default.createElement(_reactNative.View,null,
+button)));
+
+
+
+},_this.
+
+renderButtons=function(){
+return(
+_react2.default.createElement(_reactNative.View,{pointerEvents:'box-none',style:[styles.buttonWrapper,{
+width:_this.state.width,
+height:_this.state.height},
+_this.props.buttonWrapperStyle]},
+_this.renderPrevButton(),
+_this.renderNextButton()));
+
+
+},_this.
+
+renderScrollView=function(pages){
+if(_reactNative.Platform.OS==='ios'){
+return(
+_react2.default.createElement(_reactNative.ScrollView,babelHelpers.extends({ref:'scrollView'},
+_this.props,
+_this.scrollViewPropOverrides(),{
+contentContainerStyle:[styles.wrapper,_this.props.style],
+contentOffset:_this.state.offset,
+onScrollBeginDrag:_this.onScrollBegin,
+onMomentumScrollEnd:_this.onScrollEnd,
+onScrollEndDrag:_this.onScrollEndDrag}),
+pages));
+
+
+}
+return(
+_react2.default.createElement(_reactNative.ViewPagerAndroid,babelHelpers.extends({ref:'scrollView'},
+_this.props,{
+initialPage:_this.props.loop?_this.state.index+1:_this.state.index,
+onPageSelected:_this.onScrollEnd,
+style:{flex:1}}),
+pages));
+
+
+},_temp),babelHelpers.possibleConstructorReturn(_this,_ret);}babelHelpers.createClass(_class,[{key:'componentWillReceiveProps',value:function componentWillReceiveProps(nextProps){var sizeChanged=(nextProps.width||width)!==this.state.width||(nextProps.height||height)!==this.state.height;if(!nextProps.autoplay&&this.autoplayTimer)clearTimeout(this.autoplayTimer);this.setState(this.initState(nextProps,sizeChanged));}},{key:'componentDidMount',value:function componentDidMount(){this.autoplay();}},{key:'componentWillUnmount',value:function componentWillUnmount(){this.autoplayTimer&&clearTimeout(this.autoplayTimer);this.loopJumpTimer&&clearTimeout(this.loopJumpTimer);}},{key:'initState',value:function initState(props,setOffsetInState){var state=this.state||{};var initState={autoplayEnd:false,loopJump:false};var newInternals={isScrolling:false};initState.total=props.children?props.children.length||1:0;if(state.total===initState.total){initState.index=state.index;}else{setOffsetInState=true;initState.index=initState.total>1?Math.min(props.index,initState.total-1):0;}initState.dir=props.horizontal===false?'y':'x';initState.width=props.width||width;initState.height=props.height||height;newInternals.offset={};if(initState.total>1){var setup=initState.index;if(props.loop){setup++;}newInternals.offset[initState.dir]=initState.dir==='y'?initState.height*setup:initState.width*setup;}if(setOffsetInState){initState.offset=newInternals.offset;}this.internals=newInternals;return initState;}},{key:'fullState',value:function fullState(){return babelHelpers.extends({},this.state,this.internals);}},{key:'render',value:function render()
 
 
 
 
 
 {
+var state=this.state;
+var props=this.props;
+var children=props.children;
+var index=state.index;
+var total=state.total;
+var loop=props.loop;
+
+
+var loopVal=loop?1:0;
+
+var pages=[];
+
+var pageStyle=[{width:state.width,height:state.height},styles.slide];
+var pageStyleLoading={
+width:this.state.width,
+height:this.state.height,
+justifyContent:'center',
+alignItems:'center'};
+
+
+
+if(total>1){
+
+pages=Object.keys(children);
+if(loop){
+pages.unshift(total-1+'');
+pages.push('0');
+}
+
+pages=pages.map(function(page,i){
+if(props.loadMinimal){
+if(i>=index+loopVal-props.loadMinimalSize&&
+i<=index+loopVal+props.loadMinimalSize){
+return _react2.default.createElement(_reactNative.View,{style:pageStyle,key:i},children[page]);
+}else{
 return(
-_react2.default.createElement(_reactNative.View,{style:{backgroundColor:'black',flex:1}},
-_react2.default.createElement(_reactNative.View,{style:{margin:128}},
-_react2.default.createElement(_reactNative.Text,{style:{color:'white'},onPress:_reactNativeRouterFlux.Actions.Home},'This is photoView (Modal)!'))));
+_react2.default.createElement(_reactNative.View,{style:pageStyleLoading,key:'loading-'+i},
+props.loadMinimalLoader?props.loadMinimalLoader:_react2.default.createElement(_reactNative.ActivityIndicator,null)));
+
+
+}
+}else{
+return _react2.default.createElement(_reactNative.View,{style:pageStyle,key:i},children[page]);
+}
+});
+}else{
+pages=_react2.default.createElement(_reactNative.View,{style:pageStyle,key:0},children);
+}
+
+return(
+_react2.default.createElement(_reactNative.View,{style:[styles.container,{
+width:state.width,
+height:state.height}]},
+
+this.renderScrollView(pages),
+props.showsPagination&&(props.renderPagination?
+this.props.renderPagination(state.index,state.total,this):
+this.renderPagination()),
+this.renderTitle(),
+this.props.showsButtons&&this.renderButtons()));
+
+
+}}]);return _class;}(_react.Component);_class.propTypes={horizontal:_react.PropTypes.bool,children:_react.PropTypes.node.isRequired,style:_reactNative.View.propTypes.style,pagingEnabled:_react.PropTypes.bool,showsHorizontalScrollIndicator:_react.PropTypes.bool,showsVerticalScrollIndicator:_react.PropTypes.bool,bounces:_react.PropTypes.bool,scrollsToTop:_react.PropTypes.bool,removeClippedSubviews:_react.PropTypes.bool,automaticallyAdjustContentInsets:_react.PropTypes.bool,showsPagination:_react.PropTypes.bool,showsButtons:_react.PropTypes.bool,loadMinimal:_react.PropTypes.bool,loadMinimalSize:_react.PropTypes.number,loadMinimalLoader:_react.PropTypes.element,loop:_react.PropTypes.bool,autoplay:_react.PropTypes.bool,autoplayTimeout:_react.PropTypes.number,autoplayDirection:_react.PropTypes.bool,index:_react.PropTypes.number,renderPagination:_react.PropTypes.func,dotStyle:_react.PropTypes.object,activeDotStyle:_react.PropTypes.object,dotColor:_react.PropTypes.string,activeDotColor:_react.PropTypes.string};_class.defaultProps={horizontal:true,pagingEnabled:true,showsHorizontalScrollIndicator:false,showsVerticalScrollIndicator:false,bounces:false,scrollsToTop:false,removeClippedSubviews:true,automaticallyAdjustContentInsets:false,showsPagination:true,showsButtons:false,loop:true,loadMinimal:false,loadMinimalSize:1,autoplay:false,autoplayTimeout:2.5,autoplayDirection:true,index:0};exports.default=_class;
+}, 477, null, "react-native-swiper/src/index.js");
+__d(/* react-native-photo-view/index.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _PhotoView=require(479 /* ./PhotoView */);var _PhotoView2=babelHelpers.interopRequireDefault(_PhotoView);exports.default=_PhotoView2.default;
+}, 478, null, "react-native-photo-view/index.js");
+__d(/* react-native-photo-view/PhotoView.android.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
+var _reactNative=require(42 /* react-native */);
+
+var resolveAssetSource=require(171 /* react-native/Libraries/Image/resolveAssetSource */);var
+
+PhotoView=function(_Component){babelHelpers.inherits(PhotoView,_Component);function PhotoView(){babelHelpers.classCallCheck(this,PhotoView);return babelHelpers.possibleConstructorReturn(this,(PhotoView.__proto__||Object.getPrototypeOf(PhotoView)).apply(this,arguments));}babelHelpers.createClass(PhotoView,[{key:'render',value:function render()
 
 
 
-}}]);return PageOne;}(_react.Component);PageOne.propTypes={photo:_react2.default.PropTypes.string.isRequired,hot:_react2.default.PropTypes.bool.isRequired};exports.default=PageOne;
-}, 475, null, "tuchong/photoView.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+var source=resolveAssetSource(this.props.source);
+var loadingIndicatorSource=resolveAssetSource(this.props.loadingIndicatorSource);
+
+if(source&&source.uri===''){
+console.warn('source.uri should not be an empty string');
+}
+
+if(this.props.src){
+console.warn('The <PhotoView> component requires a `source` property rather than `src`.');
+}
+
+if(source&&source.uri){var _props=
+this.props,onLoadStart=_props.onLoadStart,onLoad=_props.onLoad,onLoadEnd=_props.onLoadEnd;
+
+var nativeProps=babelHelpers.extends({},
+this.props,{
+shouldNotifyLoadEvents:!!(onLoadStart||onLoad||onLoadEnd),
+src:source.uri,
+loadingIndicatorSrc:loadingIndicatorSource?loadingIndicatorSource.uri:null});
+
+
+return _react2.default.createElement(PhotoViewAndroid,nativeProps);
+}
+return null;
+}}]);return PhotoView;}(_react.Component);PhotoView.propTypes=babelHelpers.extends({source:_react.PropTypes.oneOfType([_react.PropTypes.shape({uri:_react.PropTypes.string}),_react.PropTypes.number]),loadingIndicatorSource:_react.PropTypes.oneOfType([_react.PropTypes.shape({uri:_react.PropTypes.string}),_react.PropTypes.number]),fadeDuration:_react.PropTypes.number,minimumZoomScale:_react.PropTypes.number,maximumZoomScale:_react.PropTypes.number,scale:_react.PropTypes.number,androidZoomTransitionDuration:_react.PropTypes.number,androidScaleType:_react.PropTypes.oneOf(["center","centerCrop","centerInside","fitCenter","fitStart","fitEnd","fitXY","matrix"]),onLoadStart:_react.PropTypes.func,onLoad:_react.PropTypes.func,onLoadEnd:_react.PropTypes.func,onTap:_react.PropTypes.func,onViewTap:_react.PropTypes.func,onScale:_react.PropTypes.func},_reactNative.View.propTypes);exports.default=PhotoView;
+
+
+var cfg={
+nativeOnly:{
+src:true,
+loadingIndicatorSrc:true,
+shouldNotifyLoadEvents:true}};
+
+
+var PhotoViewAndroid=(0,_reactNative.requireNativeComponent)('PhotoViewAndroid',PhotoView,cfg);
+}, 479, null, "react-native-photo-view/PhotoView.android.js");
 ;require(192);
 ;require(0);
 //# sourceMappingURL=index.android.map

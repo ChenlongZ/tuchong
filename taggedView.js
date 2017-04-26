@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
-  ActivityIndicator,
-  View,
-  Image,
-  Dimensions,
-  ListView,
-  TouchableHighlight,
-  StyleSheet,
-  Text,
+    ActivityIndicator,
+    View,
+    Image,
+    Dimensions,
+    ListView,
+    TouchableHighlight,
+    StyleSheet,
+    Text,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import NavigationBar from 'react-native-navbar';
 import AnimatedNavBar from './animatedNavBar.js';
 
@@ -17,11 +17,11 @@ import AnimatedNavBar from './animatedNavBar.js';
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
 //image url format: "https://photo.tuchong.com/" + userId + "/%format/" + imageId + ".jpg"
 // format: {
-    // f: full
-    // g: grid
-    // s: small
-    // m: medium
-    // l: large
+// f: full
+// g: grid
+// s: small
+// m: medium
+// l: large
 //}
 const tagBaseUrl = "https://tuchong.com/rest/tags/";
 const userBaseUrl = "https://tuchong.com/rest/sites/";
@@ -35,192 +35,200 @@ const paddingLeftRight = 3;
 
 export default class TaggedView extends Component {
 
-  static propTypes = {
-    tag: React.PropTypes.string.isRequired,
-    hot: React.PropTypes.bool.isRequired,
-  }
-
-  constructor(props) {
-    super();
-    this.hot = true;
-    this.imagePool = [];
-    this.pageNum = 0;
-    this.state = {
-      isLoading: false,
-      dataSource: ds.cloneWithRows(this.imagePool, null)
+    static propTypes = {
+        tag: React.PropTypes.string.isRequired,
+        hot: React.PropTypes.bool.isRequired,
     }
-    setInterval(() => {
-      if (this.hot !== this.props.hot) {
-        this.hot = this.props.hot;
-        this.componentDidMount();
-      }
-    }, 200);
 
-    this._generateImages.bind(this);
-    this._generateRowItems.bind(this);
-  }
-
-  _fetch() {
-    if (this.pageNum === 1 && !this.state.isLoading) {
-        this.setState({
-          isLoading: true
-      });
-    }
-  	let fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.props.hot?'':'&order=new'}&page=${this.pageNum}`;
-    fetch(fetch_url)
-    .then((response) => response.json())
-    .then((responseJson) => {
-      let result = responseJson.postList.map((elem, index) => {
-        var feed = {};
-        feed.title = elem.title;
-        feed.coverImageGridUrl = elem.cover_image_src;
-        if (feed.coverImageGridUrl === undefined) {
-          return undefined;
+    constructor(props) {
+        super();
+        this.hot = true;
+        this.imagePool = [];
+        this.pageNum = 0;
+        this.state = {
+            isLoading: false,
+            dataSource: ds.cloneWithRows(this.imagePool, null)
         }
-        feed.coverImageLargeUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/l/$3");
-        feed.coverImageMediumUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/m/$3");
-        feed.coverImageSmallUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/s/$3");
-      	feed.likes = parseInt(elem.favorites);
-      	feed.comments = parseInt(elem.comments);
-      	feed.publishedAt = elem.published_at;
-      	feed.authorId = parseInt(elem.author_id);
-      	feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
-      	feed.postImages = elem.images.map((img, index) => {
-    			 return {
-    			  url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
-    			  height: img.height,
-    			  width: img.width,
-    			  ar: parseFloat(img.height) / parseFloat(img.width),
-    			 };
-    		 });
-    	  feed.coverImageAR = feed.postImages[0].ar;
-    	  return feed;
-  	 });
-     result = result.filter((val) => val !== undefined);
-     if (result.length % 2 !== 0) result.pop();
-     for (let i = 0; i < result.length; i+=2) {
-       this.imagePool.push({
-         first: result[i],
-         second: result[i + 1],
-       });
-     }
-  	 this.setState({
-    	dataSource: ds.cloneWithRows(this.imagePool, null),
-      isLoading: false,
-     });
-    })
-    .catch((error) => {
-      // alert(error);
-    	alert("Hahaha, 404 not found!");
-    });
-  }
+        setInterval(() => {
+            if (this.hot !== this.props.hot) {
+                this.hot = this.props.hot;
+                this.componentDidMount();
+            }
+        }, 200);
 
-   _generateRowItems(data) {
-      return(
-          <TouchableHighlight
-              style={{paddingRight: paddingLeftRight / 2}}
-              onPress={() => Actions.photoView({title: data.title, data: data})}
-          >
-              <View style={{ width: data.Width, height: data.Height }}>
-                  <Image source={{
-                      uri: data.coverImageMediumUrl,
-                      width: data.Width,
-                      height: data.Height }}/>
-                  {data.postImages.length > 1
-                      ?<View style={styles.imageSetSize}>
-                          <Text style={{color: 'rgba(255, 255, 255, 0.8)', fontSize: 14}}>{data.postImages.length}</Text>
-                      </View>
-                      :null}
-              </View>
-          </TouchableHighlight>
-      )
-  }
-  _generateImages() {
-    return (
-      <ListView style={styles.content}
-        dataSource={this.state.dataSource}
-        renderRow={(rowData, sectionID, rowID, highlightRow) => {
-          let rowHeight = (deviceWidth - 3 * paddingLeftRight) * rowData.first.coverImageAR * rowData.second.coverImageAR / (rowData.first.coverImageAR + rowData.second.coverImageAR);
-          let firstItemWidth = rowHeight / rowData.first.coverImageAR + paddingLeftRight / 2;
-          let secondItemWidth = rowHeight / rowData.second.coverImageAR + paddingLeftRight / 2;
-          let firstImgWidth = firstItemWidth - paddingLeftRight / 2;
-          let firstImgHeight = rowHeight;
-          let secondImgWidth = secondItemWidth - paddingLeftRight / 2;
-          let secondImgHeight = rowHeight;
-          rowData.first.Width = firstImgWidth;
-          rowData.first.Height = firstImgHeight;
-          rowData.second.Width = secondImgWidth;
-          rowData.second.Height = secondImgHeight;
-          return (
-            <View key={rowID} style={{
-              flexDirection: 'row',
-              paddingLeft: paddingLeftRight,
-              paddingRight: paddingLeftRight,
-            }}>
-                {this._generateRowItems(rowData.first)}
-                {this._generateRowItems(rowData.second)}
-            </View>
-          )
-        }}
-  		  renderSeparator={(sectionID, rowID) => {
-          return (<View key={`${sectionID}-${rowID}`}
-            style={{width: deviceWidth, height: paddingLeftRight, backgroundColor: 'white'}}/>)
-        }}
-  		  onEndReached={() => {
-          if(this.pageNum <= 10) {
-            this.pageNum++;
-            this._fetch();
-          }
-        }}
-  		  onEndReachedThreshold={100}
-       />
-    )
-  }
+        this._generateImages.bind(this);
+        this._generateRowItems.bind(this);
+    }
 
-  componentDidMount() {
-    this.pageNum = 1;
-    this.imagePool = [];
-    this.setState({
-      isLoading: false,
-      dataSource: ds.cloneWithRows(this.imagePool),
-    });
-    this._fetch();
-  }
+    _fetch() {
+        if (this.pageNum === 1 && !this.state.isLoading) {
+            this.setState({
+                isLoading: true
+            });
+        }
+        let fetch_url = `${tagBaseUrl}${this.props.tag}/posts?type=subject${this.props.hot ? '' : '&order=new'}&page=${this.pageNum}`;
+        fetch(fetch_url)
+            .then((response) => response.json())
+            .then((responseJson) => {
+                let result = responseJson.postList.map((elem, index) => {
+                    var feed = {};
+                    feed.title = elem.title;
+                    feed.coverImageGridUrl = elem.cover_image_src;
+                    if (feed.coverImageGridUrl === undefined) {
+                        return undefined;
+                    }
+                    feed.coverImageLargeUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/l/$3");
+                    feed.coverImageMediumUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/m/$3");
+                    feed.coverImageSmallUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/s/$3");
+                    feed.likes = parseInt(elem.favorites);
+                    feed.comments = parseInt(elem.comments);
+                    feed.publishedAt = elem.published_at;
+                    feed.authorId = parseInt(elem.author_id);
+                    feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
+                    feed.postImages = elem.images.map((img, index) => {
+                        return {
+                            url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
+                            height: img.height,
+                            width: img.width,
+                            ar: parseFloat(img.height) / parseFloat(img.width),
+                        };
+                    });
+                    feed.coverImageAR = feed.postImages[0].ar;
+                    return feed;
+                });
+                result = result.filter((val) => val !== undefined);
+                if (result.length % 2 !== 0) result.pop();
+                for (let i = 0; i < result.length; i += 2) {
+                    this.imagePool.push({
+                        first: result[i],
+                        second: result[i + 1],
+                    });
+                }
+                this.setState({
+                    dataSource: ds.cloneWithRows(this.imagePool, null),
+                    isLoading: false,
+                });
+            })
+            .catch((error) => {
+                // alert(error);
+                alert("Hahaha, 404 not found!");
+            });
+    }
 
-  // navBarAnim = (close) => {
-  //     Animated.timing(
-  //       navBarHeight,
-  //       {
-  //         toValue: close ? 0 : 58,
-  //         duration: 200,
-  //       }
-  //     ).start();
-  // }
+    _generateRowItems(data) {
+        return (
+            <TouchableHighlight
+                style={{paddingRight: paddingLeftRight / 2}}
+                onPress={() => Actions.photoView({title: data.title, data: data})}>
+                <View style={{width: data.Width, height: data.Height}}>
+                    <Image source={{
+                        uri: data.coverImageMediumUrl,
+                        width: data.Width,
+                        height: data.Height
+                    }}/>
+                    {data.postImages.length > 1
+                        ? <View style={styles.imageSetSize}>
+                            <Text style={{
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                fontSize: 14
+                            }}>{data.postImages.length}</Text>
+                        </View>
+                        : null}
+                </View>
+            </TouchableHighlight>
+        )
+    }
 
-  render() {
-    console.log(`${this.props.tag} ${this.props.hot} pageNum=${this.pageNum}`);
-    // if (this.props.hot != this.hot) {
-    //   this.hot = this.props.hot;
-    //   this.componentDidMount();
+    _generateImages() {
+        return (
+            <ListView style={styles.content}
+                      dataSource={this.state.dataSource}
+                      renderRow={(rowData, sectionID, rowID, highlightRow) => {
+                          let rowHeight = (deviceWidth - 3 * paddingLeftRight) * rowData.first.coverImageAR * rowData.second.coverImageAR / (rowData.first.coverImageAR + rowData.second.coverImageAR);
+                          let firstItemWidth = rowHeight / rowData.first.coverImageAR + paddingLeftRight / 2;
+                          let secondItemWidth = rowHeight / rowData.second.coverImageAR + paddingLeftRight / 2;
+                          let firstImgWidth = firstItemWidth - paddingLeftRight / 2;
+                          let firstImgHeight = rowHeight;
+                          let secondImgWidth = secondItemWidth - paddingLeftRight / 2;
+                          let secondImgHeight = rowHeight;
+                          rowData.first.Width = firstImgWidth;
+                          rowData.first.Height = firstImgHeight;
+                          rowData.second.Width = secondImgWidth;
+                          rowData.second.Height = secondImgHeight;
+                          return (
+                              <View key={rowID} style={{
+                                  flexDirection: 'row',
+                                  paddingLeft: paddingLeftRight,
+                                  paddingRight: paddingLeftRight,
+                              }}>
+                                  {this._generateRowItems(rowData.first)}
+                                  {this._generateRowItems(rowData.second)}
+                              </View>
+                          )
+                      }}
+                      renderSeparator={(sectionID, rowID) => {
+                          return (<View key={`${sectionID}-${rowID}`}
+                                        style={{
+                                            width: deviceWidth,
+                                            height: paddingLeftRight,
+                                            backgroundColor: 'white'
+                                        }}/>)
+                      }}
+                      onEndReached={() => {
+                          if (this.pageNum <= 10) {
+                              this.pageNum++;
+                              this._fetch();
+                          }
+                      }}
+                      onEndReachedThreshold={100}
+            />
+        )
+    }
+
+    componentDidMount() {
+        this.pageNum = 1;
+        this.imagePool = [];
+        this.setState({
+            isLoading: false,
+            dataSource: ds.cloneWithRows(this.imagePool),
+        });
+        this._fetch();
+    }
+
+    // navBarAnim = (close) => {
+    //     Animated.timing(
+    //       navBarHeight,
+    //       {
+    //         toValue: close ? 0 : 58,
+    //         duration: 200,
+    //       }
+    //     ).start();
     // }
-    return (
-      this.state.isLoading
-        ? <ActivityIndicator
-            animating={true}
-            size="large"
-            style={styles.loadingIndicator}/>
-        : this._generateImages()
-    )
-  }
+
+    render() {
+        console.log(`${this.props.tag} ${this.props.hot} pageNum=${this.pageNum}`);
+        // if (this.props.hot != this.hot) {
+        //   this.hot = this.props.hot;
+        //   this.componentDidMount();
+        // }
+        return (
+            this.state.isLoading
+                ? <ActivityIndicator
+                animating={true}
+                size="large"
+                style={styles.loadingIndicator}/>
+                : this._generateImages()
+        )
+    }
 }
 
 const styles = StyleSheet.create({
-  loadingIndicator: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 8,
-  },
+    loadingIndicator: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 8,
+    },
     imageSetSize: {
         flexDirection: 'row',
         justifyContent: 'center',

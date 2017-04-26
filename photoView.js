@@ -1,19 +1,121 @@
-import React, { Component } from 'react';
-import { View, Text } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import React, {Component} from 'react';
+import {
+    ActivityIndicator,
+    View,
+    Dimensions,
+    Platform,
+    Text,
+    StyleSheet,
+} from 'react-native';
+import {Actions} from 'react-native-router-flux';
+import Swiper from 'react-native-swiper';
+import PhotoView from 'react-native-photo-view';
 
-export default class PageOne extends Component {
+const BOTTOM_BAR_HEIGHT = 64;
+const PHOTOVIEW_WIDTH = Dimensions.get('window').width;
+const PHOTOVIEW_HEIGHT = Dimensions.get('window').height - (Platform.OS == 'ios' ? 64 : 54) - BOTTOM_BAR_HEIGHT;
+const PHOTOVIEW_AR = PHOTOVIEW_HEIGHT / PHOTOVIEW_WIDTH;
+
+export default class extends Component {
 
     static propTypes = {
         data: React.PropTypes.any.isRequired,
+    };
+
+    constructor(props) {
+        super(props);
+        this._generatePhotos.bind(this);
     }
-  render() {
-    return (
-      <View style={{backgroundColor: 'black', flex: 1}}>
-        <View style={{margin: 128}}>
-          <Text style={{color: 'white'}} onPress={Actions.Home}>This is photoView (Modal)!</Text>
-        </View>
-      </View>
-    )
-  }
+
+    _generatePhotos() {
+        // feed.title = elem.title;
+        // feed.coverImageGridUrl = elem.cover_image_src;
+        // if (feed.coverImageGridUrl === undefined) {
+        //     return undefined;
+        // }
+        // feed.coverImageLargeUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/l/$3");
+        // feed.coverImageMediumUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/m/$3");
+        // feed.coverImageSmallUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/s/$3");
+        // feed.likes = parseInt(elem.favorites);
+        // feed.comments = parseInt(elem.comments);
+        // feed.publishedAt = elem.published_at;
+        // feed.authorId = parseInt(elem.author_id);
+        // feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
+        // feed.postImages = elem.images.map((img, index) => {
+        //     return {
+        //         url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
+        //         height: img.height,
+        //         width: img.width,
+        //         ar: parseFloat(img.height) / parseFloat(img.width),
+        //     };
+        // });
+        // feed.coverImageAR = feed.postImages[0].ar;
+        return(
+            this.props.data.postImages.map((elem, index, array) => {
+                let imgWidth = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT / elem.ar : PHOTOVIEW_WIDTH;
+                let imgHeight = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT : PHOTOVIEW_WIDTH * elem.ar;
+                return(
+                  <PhotoView
+                      key={index}
+                      style={{height: imgHeight, width: imgWidth}}
+                      source={{uri: elem.url}}
+                      minimumZoomScale={0.5}
+                      maximumZoomScale={3}
+                      androidScaleType="center"
+                      loadingIndicatorSource={
+                          <ActivityIndicator
+                              animating={true}
+                              color='#ffd939'
+                              size={75} />
+                      }
+                      onTap={() => {Actions.pop()}}  //TODO
+                  />
+              );
+          })
+        );
+    }
+
+    render() {
+        return (
+            <View style={styles.overall}>
+                <View style={styles.occupySpace}/>
+                <Swiper style={styles.swiper}
+                    showsPagination={true} >
+                    {this._generatePhotos()}
+                </Swiper>
+                <View style={styles.bottomBar}>
+
+                </View>
+            </View>
+        )
+    }
 }
+
+const styles = StyleSheet.create({
+    overall: {
+        flex: 1,
+    },
+    occupySpace: {
+        ...Platform.select({
+            ios: {
+                height: 64,
+            },
+            android: {
+                height: 54,
+            }
+        }),
+    },
+    swiper: {
+        height: PHOTOVIEW_HEIGHT,
+    },
+    bottomBar: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: BOTTOM_BAR_HEIGHT,
+        backgroundColor: 'black',
+        borderTopColor: 'white',
+        borderTopWidth: 5,
+    },
+});
