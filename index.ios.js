@@ -80,15 +80,19 @@ class tuchong extends Component {
                     <Scene
                         key='photoView'
                         component={ PhotoView }
-                        title='change me'
-                        direction='vertical'
-                        navigationBarStyle={
-                            {
-                                backgroundColor: 'transparent',
-                                borderBottomColor: 'white',
-                                borderBottomWidth: 2
-                            }}
-                        leftButtonIconStyle={{tintColor: 'white'}}
+                        navigationBarStyle={{
+                            backgroundColor: 'black',
+                            borderBottomColor: 'white',
+                            borderBottomWidth: 1,
+                        }}
+                        titleStyle={{
+                            color: 'rgba(255, 255, 255, 0.9)',
+                            fontWeight: '500',
+                        }}
+                        leftButtonIconStyle={{
+                            tintColor: 'white',
+                            marginLeft: 10,
+                        }}
                     />
                 </Scene>
             </Router>

@@ -28,28 +28,6 @@ export default class extends Component {
     }
 
     _generatePhotos() {
-        // feed.title = elem.title;
-        // feed.coverImageGridUrl = elem.cover_image_src;
-        // if (feed.coverImageGridUrl === undefined) {
-        //     return undefined;
-        // }
-        // feed.coverImageLargeUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/l/$3");
-        // feed.coverImageMediumUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/m/$3");
-        // feed.coverImageSmallUrl = elem.cover_image_src.replace(/(\d+)\/(.+)\/(\d+.jpg)/, "$1/s/$3");
-        // feed.likes = parseInt(elem.favorites);
-        // feed.comments = parseInt(elem.comments);
-        // feed.publishedAt = elem.published_at;
-        // feed.authorId = parseInt(elem.author_id);
-        // feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
-        // feed.postImages = elem.images.map((img, index) => {
-        //     return {
-        //         url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
-        //         height: img.height,
-        //         width: img.width,
-        //         ar: parseFloat(img.height) / parseFloat(img.width),
-        //     };
-        // });
-        // feed.coverImageAR = feed.postImages[0].ar;
         return(
             this.props.data.postImages.map((elem, index, array) => {
                 // TODO: the adjusted image width and height seem not working
@@ -58,8 +36,8 @@ export default class extends Component {
                 return(
                   <PhotoView
                       key={index}
-                      style={{height: PHOTOVIEW_HEIGHT, width: PHOTOVIEW_WIDTH, backgroundColor: 'black'}}
-                      source={{uri: elem.url, height: imgHeight, width: imgWidth}}
+                      style={{flex: 1, backgroundColor: 'black'}}
+                      source={{uri: elem.url, width: imgWidth, height: imgHeight}}
                       minimumZoomScale={0.5}
                       maximumZoomScale={3}
                       androidScaleType="center"
@@ -80,17 +58,13 @@ export default class extends Component {
         return (
             <View style={styles.overall}>
                 <View style={styles.occupySpace}/>
-                <Swiper style={styles.swiper}
+                <Swiper style={styles.imageSet}
+                    height={PHOTOVIEW_HEIGHT}
+                    width={PHOTOVIEW_WIDTH}
                     showsButtons={false}
                     autoplay={false}
-                    activeDot={ // TODO: not showing
-                        <View style={{
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                            width: 8,
-                            height: 8,
-                            borderRadius: 4,
-                            margin: 3,
-                            }} />}>
+                    showPagination={true}
+                    dotColor='rgba(255, 255, 255, 0.5)'>
                     {this._generatePhotos()}
                 </Swiper>
                 <View style={styles.bottomBar}>
@@ -102,6 +76,10 @@ export default class extends Component {
 }
 
 const styles = StyleSheet.create({
+    overall: {
+        flex: 1,
+        flexDirection: 'column',
+    },
     occupySpace: {
         ...Platform.select({
             ios: {
@@ -112,8 +90,8 @@ const styles = StyleSheet.create({
             }
         }),
     },
-    swiper: {
-        height: PHOTOVIEW_HEIGHT,
+    imageSet: {
+        backgroundColor: 'black'
     },
     bottomBar: {
         position: 'absolute',
@@ -123,6 +101,6 @@ const styles = StyleSheet.create({
         height: BOTTOM_BAR_HEIGHT,
         backgroundColor: 'black',
         borderTopColor: 'white',
-        borderTopWidth: 2,
+        borderTopWidth: 1,
     },
 });
