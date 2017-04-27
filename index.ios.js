@@ -82,8 +82,6 @@ class tuchong extends Component {
                         component={ PhotoView }
                         navigationBarStyle={{
                             backgroundColor: 'black',
-                            borderBottomColor: 'white',
-                            borderBottomWidth: 1,
                         }}
                         titleStyle={{
                             color: 'rgba(255, 255, 255, 0.9)',

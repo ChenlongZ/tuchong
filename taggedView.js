@@ -16,6 +16,7 @@ import AnimatedNavBar from './animatedNavBar.js';
 //tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1&order=new
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
 //image url format: "https://photo.tuchong.com/" + userId + "/%format/" + imageId + ".jpg"
+//post url format: "https://tuchong.com/rest/posts/" + postId;
 // format: {
 // f: full
 // g: grid
@@ -26,8 +27,9 @@ import AnimatedNavBar from './animatedNavBar.js';
 const tagBaseUrl = "https://tuchong.com/rest/tags/";
 const userBaseUrl = "https://tuchong.com/rest/sites/";
 const imageBaseUrl = "https://photo.tuchong.com/";
+const postBaseUrl = "https://tuchong.com/rest/posts/";
 
-const deviceWidth = Dimensions.get('window').width
+const deviceWidth = Dimensions.get('window').width;
 const deviceHeight = Dimensions.get('window').height;
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -84,7 +86,9 @@ export default class TaggedView extends Component {
                     feed.comments = parseInt(elem.comments);
                     feed.publishedAt = elem.published_at;
                     feed.authorId = parseInt(elem.author_id);
+                    feed.postId = parseInt(elem.post_id);
                     feed.authorUrl = userBaseUrl + parseInt(elem.author_id) + "/posts/" + elem.published_at;
+                    feed.postUrl = postBaseUrl + elem.post_id;
                     feed.postImages = elem.images.map((img, index) => {
                         return {
                             url: imageBaseUrl + img.user_id + "/f/" + img.img_id + ".jpg",
@@ -119,7 +123,7 @@ export default class TaggedView extends Component {
         return (
             <TouchableHighlight
                 style={{paddingRight: paddingLeftRight / 2}}
-                onPress={() => Actions.photoView({title: data.title, data: data})}>
+                onPress={() => Actions.photoView({title: data.title, propData: data})}>
                 <View style={{width: data.Width, height: data.Height}}>
                     <Image source={{
                         uri: data.coverImageMediumUrl,
@@ -180,8 +184,7 @@ export default class TaggedView extends Component {
                               this._fetch();
                           }
                       }}
-                      onEndReachedThreshold={100}
-            />
+                      onEndReachedThreshold={100}/>
         )
     }
 
