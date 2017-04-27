@@ -11,6 +11,7 @@ import {
 import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import PhotoView from 'react-native-photo-view';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const BOTTOM_BAR_HEIGHT = 75;
 const PHOTOVIEW_WIDTH = Dimensions.get('window').width;
@@ -82,7 +83,6 @@ export default class extends Component {
         let photos = this.state.photos;
         return (
             photos.map((elem, index, array) => {
-                // TODO: the adjusted image width and height seem not working
                 let imgWidth = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT / elem.ar : PHOTOVIEW_WIDTH;
                 let imgHeight = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT : PHOTOVIEW_WIDTH * elem.ar;
                 return (
@@ -93,10 +93,7 @@ export default class extends Component {
                         minimumZoomScale={0.5}
                         maximumZoomScale={3}
                         loadingIndicatorSource={ // TODO: not work
-                            <ActivityIndicator
-                                animating={true}
-                                color='#ffd939'
-                                size={75}/>
+                            require('./resources/animal.gif')
                         }
                         onTap={() => {
                             Actions.pop()
@@ -110,59 +107,80 @@ export default class extends Component {
         return (
             <View style={styles.overall}>
                 <View style={styles.occupySpace}/>
-                <Swiper style={styles.imageSet}
-                        height={PHOTOVIEW_HEIGHT}
-                        width={PHOTOVIEW_WIDTH}
-                        showsButtons={false}
-                        autoplay={false}
-                        showPagination={true}
-                        dotColor='rgba(255, 255, 255, 0.5)'>
-                    {this._generatePhotos()}
-                </Swiper>
-                {this.state.author === undefined ? null :
-                    <View style={styles.bottomBar}>
-                        <View style={styles.bottomUpper}>
-                            <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
-                                <Image source={{url: this.state.author.authorThumbnail, height: 20, width: 20}}/>
-                                <View style={{
-                                    flexDirection: 'column',
-                                    justifyContent: 'center',
-                                    padding: 5,
-                                    paddingLeft: 8
-                                    }}>
-                                    <Text style={{
-                                        paddingBottom: 1,
-                                        fontSize: 13,
-                                        fontWeight: '900',
-                                        color: 'white'
-                                    }}>{this.state.author.authorName}</Text>
-                                    <Text style={{
-                                        paddingTop: 2,
-                                        fontSize: 12,
-                                        fontWeight: '300',
-                                        color: 'gray'
-                                    }}>{this.state.author.time}</Text>
-                                </View>
-                            </View>
+                {this.state.photos.length === 0
+                    ? <View style={{
+                        flex: 1, justifyContent: 'center', alignItems: 'center',
+                        backgroundColor: 'black'}}>
+                        <Image style={{height: 50, width: 50}} source={require('./resources/ripple.gif')}/>
+                      </View>
+                    : <Swiper style={styles.imageSet}
+                              height={PHOTOVIEW_HEIGHT}
+                              width={PHOTOVIEW_WIDTH}
+                              showsButtons={false}
+                              autoplay={false}
+                              showPagination={true}
+                              dotColor='rgba(255, 255, 255, 0.5)'>
+                        {this._generatePhotos()}
+                    </Swiper>}
+                <View style={styles.bottomBar}>
+                    <View style={styles.bottomUpper}>
+                        <View
+                            style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
+                            <Image style={{
+                                    alignSelf: 'center',
+                                    height: 40,
+                                    width: 40,
+                                    borderWidth: 1,
+                                    borderRadius: 20,
+                                    resizeMode: 'cover',
+                                }}
+                                   source={this.state.author === undefined
+                                       ? require('./resources/ring-alt.gif')
+                                       : {uri: this.state.author.authorThumbnail, height: 38, width: 38}}/>
                             <View style={{
-                                flex: 1,
-                                flexDirection: 'row',
-                                justifyContent: 'flex-end',
-                                alignItems: 'center',
-                                paddingRight: 8}}>
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                padding: 5,
+                                paddingLeft: 8
+                            }}>
                                 <Text style={{
-                                    fontSize: 15,
-                                    fontWeight: '500',
+                                    paddingBottom: 1,
+                                    fontSize: 13,
+                                    fontWeight: '900',
                                     color: 'white'
-                                }}>{this.state.author.comments}</Text>
-                                {/*<Icon>{comment}</Icon>*/}
+                                }}>{this.state.author === undefined ? null : this.state.author.authorName}</Text>
+                                <Text style={{
+                                    paddingTop: 2,
+                                    fontSize: 12,
+                                    fontWeight: '300',
+                                    color: 'gray'
+                                }}>{this.state.author === undefined ? null : this.state.author.time}</Text>
                             </View>
                         </View>
-                        <View style={styles.bottomLower}>
-                            {/*<Icon>{heart}</Icon>*/}
-                            <Text style={{fontSize: 12, fontWeight: '500', color: 'white'}}>{this.state.author.likes} 人喜欢了这张</Text>
+                        <View style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center',
+                            paddingRight: 8
+                        }}>
+                            <Text style={{
+                                fontSize: 15,
+                                fontWeight: '500',
+                                color: 'white'
+                            }}>{this.state.author === undefined ? null : this.state.author.comments}  </Text>
+                            <Icon name="comment-o" size={18} color="white"/>
                         </View>
-                    </View>}
+                    </View>
+                    <View style={styles.bottomLower}>
+                        <Icon name="heart" size={12} color="white"/>
+                        <Text style={{
+                            fontSize: 12,
+                            fontWeight: '500',
+                            color: 'white'
+                        }}> {this.state.author === undefined ? 0 : this.state.author.likes} 人喜欢了这个相集</Text>
+                    </View>
+                </View>
             </View>
         )
     }
@@ -193,14 +211,15 @@ const styles = StyleSheet.create({
         right: 0,
         height: BOTTOM_BAR_HEIGHT,
         borderTopColor: 'white',
+        backgroundColor: 'black',
         flexDirection: 'column',
     },
     bottomUpper: {
         flex: 2,
         flexDirection: 'row',
         backgroundColor: 'black',
-        paddingLeft: 8,
-        paddingRight: 8,
+        paddingLeft: 5,
+        paddingRight: 5,
         borderBottomColor: 'rgba(255, 255, 255, 0.5)',
         borderBottomWidth: 0.5,
     },

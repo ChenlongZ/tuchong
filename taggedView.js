@@ -216,10 +216,9 @@ export default class TaggedView extends Component {
         // }
         return (
             this.state.isLoading
-                ? <ActivityIndicator
-                animating={true}
-                size="large"
-                style={styles.loadingIndicator}/>
+                ? <View style={styles.loadingIndicator}>
+                        <Image source={require('./resources/animal.gif')}/>
+                  </View>
                 : this._generateImages()
         )
     }
