@@ -12,11 +12,19 @@ import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import PhotoView from 'react-native-photo-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import PopupDialog, {ScaleAnimation} from 'react-native-popup-dialog';
 
+const DEVICE_W = Dimensions.get('window').width;
+const DEVICE_H = Dimensions.get('window').height;
 const BOTTOM_BAR_HEIGHT = 75;
-const PHOTOVIEW_WIDTH = Dimensions.get('window').width;
-const PHOTOVIEW_HEIGHT = Dimensions.get('window').height - (Platform.OS == 'ios' ? 64 : 54) - BOTTOM_BAR_HEIGHT;
+const PHOTOVIEW_WIDTH = DEVICE_W;
+const PHOTOVIEW_HEIGHT = DEVICE_H - (Platform.OS == 'ios' ? 64 : 54) - BOTTOM_BAR_HEIGHT;
 const PHOTOVIEW_AR = PHOTOVIEW_HEIGHT / PHOTOVIEW_WIDTH;
+const POPUP_W = DEVICE_W - 75;
+const POPUP_H = 300;
+const POPUP_TOP = (DEVICE_H - POPUP_H) / 2;
+const POPUP_LEFT = (DEVICE_W - POPUP_W) / 2;
 
 export default class extends Component {
 
@@ -28,6 +36,8 @@ export default class extends Component {
         super(props);
         this._fetchInfo.bind(this);
         this._generatePhotos.bind(this);
+        this._renderPopup.bind(this);
+        this.popupDialog = undefined;
         this.state = {
             photos: [],
             author: undefined,
@@ -39,13 +49,6 @@ export default class extends Component {
         this._fetchInfo();
     }
 
-    // comments
-    // likes
-    // time
-    // authorInfo:
-    //      author name
-    //      author thumbnail
-    //      author others
     _fetchInfo() {
         fetch(this.props.propData.postUrl)
             .then((response) => response.json())
@@ -86,21 +89,148 @@ export default class extends Component {
                 let imgWidth = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT / elem.ar : PHOTOVIEW_WIDTH;
                 let imgHeight = elem.ar > PHOTOVIEW_AR ? PHOTOVIEW_HEIGHT : PHOTOVIEW_WIDTH * elem.ar;
                 return (
-                    <PhotoView
-                        key={index}
-                        style={{flex: 1, backgroundColor: 'black'}}
-                        source={{uri: elem.url, width: imgWidth, height: imgHeight}}
-                        minimumZoomScale={0.5}
-                        maximumZoomScale={3}
-                        loadingIndicatorSource={ // TODO: not work
-                            require('./resources/animal.gif')
-                        }
-                        onTap={() => {
-                            Actions.pop()
-                        }}  //TODO
-                    />
+                    <View key={index} style={{flex: 1}}>
+                        <PhotoView
+                            style={{flex: 1, backgroundColor: 'black'}}
+                            source={{uri: elem.url, width: imgWidth, height: imgHeight}}
+                            minimumZoomScale={0.5}
+                            maximumZoomScale={3}
+                            loadingIndicatorSource={ // TODO: not work
+                                require('./resources/animal.gif')
+                            }
+                            onTap={() => {
+                                this.popupDialog.show();
+                            }}
+                        />
+                        {this._renderPopup(elem.exif)}
+                    </View>
                 );
             }));
+    }
+
+    _renderPopup(exif) {
+        if (this.state.author === undefined) {
+            return null;
+        }
+        return (
+            <PopupDialog style={{
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}
+                         dialogAnimation={new ScaleAnimation()}
+                         width={POPUP_W}
+                         height={POPUP_H}
+                         ref={(popupDialog) => {
+                             this.popupDialog = popupDialog;
+                         }}>
+                <View style={{
+                    flex: 1,
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingTop: 15,
+                }}>
+                    <Image style={{
+                        padding: 10,
+                        alignSelf: 'center',
+                        borderWidth: 1,
+                        borderRadius: 20,
+                        resizeMode: 'cover'
+                    }}
+                           source={{uri: this.state.author.authorThumbnail, height: 38, width: 38}}/>
+                    <Text style={{
+                        padding: 12,
+                        fontSize: 13,
+                        fontWeight: '900',
+                        color: 'black',
+                    }}>{this.state.author.authorName}</Text>
+                    <View style={{
+                        backgroundColor: '#AAA',
+                        height: 1,
+                        width: POPUP_W - 20
+                    }}/>
+                </View>
+                {exif.camera !== undefined || exif.lens !== undefined || exif.exposure !== undefined ?
+                    <View style={{
+                        flex: 1,
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}>
+                        {exif.camera !== undefined ? <View style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                            <Icon name="camera" size={12} color="gray"/>
+                            <Text style={{fontSize: 12, color: "gray", fontWeight: "500"}}>   {exif.camera.name}</Text>
+                        </View> : null}
+                        {exif.lens !== undefined ? <View style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                            <IonIcon name="md-aperture" size={14} color="gray"/>
+                            <Text style={{fontSize: 12, color: "gray", fontWeight: "500"}}>   {exif.lens.name}</Text>
+                        </View> : null}
+                        {exif.exposure !== undefined ? <View style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}>
+                            {exif.exposure.split(",").map((elem, index) => {
+                                return (<Text key={index}
+                                              style={{fontSize: 12, color: "gray", fontWeight: "500"}}>{elem}</Text>);
+                            })}
+                        </View> : null}
+                        <View style={{
+                            backgroundColor: '#AAA',
+                            height: 1,
+                            width: POPUP_W - 20
+                        }}/>
+                    </View> : null }
+                {this.state.tags !== undefined ? <View style={{
+                    flex: 1,
+                    paddingTop: 10,
+                    paddingBottom: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
+                    {this._generateTagViews(this.state.tags)}
+                </View> : null}
+            </PopupDialog>
+        )
+    }
+
+    _generateTagViews(tags) {
+        let tagLen = tags.length;
+        if (tagLen <= 3) {
+            // one row
+            return (
+                <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}>
+                    {tags.map((elem, index) => {
+                        return (
+                            <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
+                                <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem}</Text>
+                            </View>
+                        )
+                    })}
+                </View>
+            )
+        } else if (tagLen > 3 && tagLen <= 6) {
+            // two rows
+        } else if (tagLen > 6 && tagLen <= 9) {
+            // three rows, max 3 in a row
+        } else if (tagLen > 9 && tagLen <= 12) {
+            // three rows, max 4 in a row
+        } else {
+            // tag length should not exceed 12
+            return <Text>标签太多啦！</Text>;
+        }
     }
 
     render() {
@@ -110,9 +240,10 @@ export default class extends Component {
                 {this.state.photos.length === 0
                     ? <View style={{
                         flex: 1, justifyContent: 'center', alignItems: 'center',
-                        backgroundColor: 'black'}}>
+                        backgroundColor: 'black'
+                    }}>
                         <Image style={{height: 50, width: 50}} source={require('./resources/ripple.gif')}/>
-                      </View>
+                    </View>
                     : <Swiper style={styles.imageSet}
                               height={PHOTOVIEW_HEIGHT}
                               width={PHOTOVIEW_WIDTH}
@@ -127,13 +258,13 @@ export default class extends Component {
                         <View
                             style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'}}>
                             <Image style={{
-                                    alignSelf: 'center',
-                                    height: 40,
-                                    width: 40,
-                                    borderWidth: 1,
-                                    borderRadius: 20,
-                                    resizeMode: 'cover',
-                                }}
+                                alignSelf: 'center',
+                                height: 40,
+                                width: 40,
+                                borderWidth: 1,
+                                borderRadius: 20,
+                                resizeMode: 'cover',
+                            }}
                                    source={this.state.author === undefined
                                        ? require('./resources/ring-alt.gif')
                                        : {uri: this.state.author.authorThumbnail, height: 38, width: 38}}/>
@@ -230,5 +361,9 @@ const styles = StyleSheet.create({
         paddingLeft: 8,
         paddingRight: 8,
         backgroundColor: 'black',
-    }
+    },
+    popUp: {},
+    popUpUser: {},
+    popUpExif: {},
+    popUpTags: {}
 });

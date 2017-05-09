@@ -114,15 +114,17 @@ export default class Home extends Component {
 
         return (
             <ScrollView style={{flex: 1}}>
-                <View style={styles.occupySpace}/>
+                <View style={styles.occupySpace} />
                 <View style={styles.topSection}>
-                    <Text>The top</Text>
+                    <Image style={styles.titleImage}
+                        source={require('./resources/tuchong.jpg')} />
                 </View>
                 <View style={styles.mainSection}>
                     {sections}
                 </View>
                 <View style={styles.bottomSection}>
-                    <Text>The bottom</Text>
+                    <Image style={styles.bottomImage}
+                           source={require('./resources/separator.png')} />
                 </View>
             </ScrollView>
         )
@@ -135,33 +137,35 @@ const styles = StyleSheet.create({
     },
     topSection: {
         height: 175,
-        borderWidth: 1,
+    },
+    titleImage: {
+        height: 175,
+        alignSelf: 'center',
+        resizeMode: 'contain',
     },
     mainSection: {
-        borderWidth: 1,
     },
     bottomSection: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
         height: 45,
-        borderColor: "rgba(255,255,0,0.7)",
-        borderWidth: 1,
+    },
+    bottomImage: {
+        height: 45,
+        resizeMode: 'contain',
     },
     subsection: {
         flexDirection: 'column',
         padding: 10,
-        borderColor: "rgba(0,0,255,0.7)",
-        borderWidth: 1,
     },
     subsectionTitle: {
         height: 30,
         flexDirection: 'row',
-        borderColor: "rgba(0,255,0,0.7)",
-        borderWidth: 1,
     },
     subsectionBody: {
         paddingLeft: 5,
         paddingRight: 5,
-        borderColor: "rgba(255,0,0,0.7)",
-        borderWidth: 1,
     },
     subsectionTitleDeco: {
         width: 15,

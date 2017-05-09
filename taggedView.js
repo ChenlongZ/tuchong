@@ -13,7 +13,7 @@ import {Actions} from 'react-native-router-flux';
 import NavigationBar from 'react-native-navbar';
 import AnimatedNavBar from './animatedNavBar.js';
 
-//tag url format: tuchong.com/rest/tags/风光/post?type=subject&page=1&order=new
+//tag url format: tuchong.com/rest/tags/风光/posts?type=subject&page=1&order=new
 //user url format: https://tuchong.com/rest/sites/280431/posts/2017-01-19 15:07:38?limit=10"
 //image url format: "https://photo.tuchong.com/" + userId + "/%format/" + imageId + ".jpg"
 //post url format: "https://tuchong.com/rest/posts/" + postId;

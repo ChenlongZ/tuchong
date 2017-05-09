@@ -13,6 +13,7 @@
     "react-native-gridview": "^0.1.1",
     "react-native-navbar": "^1.7.1",
     "react-native-photo-view": "^1.2.0",
+    "react-native-popup-dialog": "^0.7.27",
     "react-native-router-flux": "3.38.0",
     "react-native-scrollable-tab-view": "^0.7.1",
     "react-native-vector-icons": "^4.0.0",
