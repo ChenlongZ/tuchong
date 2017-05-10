@@ -5,7 +5,9 @@ import {
     Image,
     Dimensions,
     Platform,
+    ScrollView,
     Text,
+    TouchableHighlight,
     StyleSheet,
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
@@ -95,7 +97,7 @@ export default class extends Component {
                             source={{uri: elem.url, width: imgWidth, height: imgHeight}}
                             minimumZoomScale={0.5}
                             maximumZoomScale={3}
-                            loadingIndicatorSource={ // TODO: not work
+                            loadingIndicatorSource={
                                 require('./resources/animal.gif')
                             }
                             onTap={() => {
@@ -114,9 +116,16 @@ export default class extends Component {
         }
         let tagsView = this.state.tags.map((elem, index) => {
             return (
-                <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
-                    <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem.tag_name}</Text>
-                </View>
+                <TouchableHighlight key={index}
+                                    onPress={() => Actions.taggedView({title: elem.tag_name, tag: elem.tag_name, hot: true})}
+                                    style={{
+                    justifyContent: 'center', alignItems: 'center',
+                    height: 20,
+                    margin: 5,
+                    paddingLeft: 10, paddingRight: 10,
+                    borderWidth: 1, borderRadius: 3, borderColor: "#3e86f9", height: 30}}>
+                    <Text style={{fontSize: 12, fontWeight: '500', color: "#3e86f9", textAlign: 'center'}}>{elem.tag_name}</Text>
+                </TouchableHighlight>
             )
         });
         return (
@@ -200,58 +209,22 @@ export default class extends Component {
                             width: POPUP_W - 20
                         }}/>
                     </View> : null }
-                {this.state.tags !== undefined ? <View style={{
-                    flex: 1,
+                {this.state.tags !== undefined ? <ScrollView style={{flex: 1}}>
+                    <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     flexWrap: 'wrap',
                     paddingTop: 10,
                     paddingBottom: 10,
-                    paddingLeft: 20,
-                    paddingRight: 20,
+                    paddingLeft: 15,
+                    paddingRight: 15,
                 }}>
                     {tagsView}
-                </View> : null}
+                </View></ScrollView> : null}
             </PopupDialog>
         )
     }
-
-    // _generateTagViews() {
-    //     var array = this.state.tags.map((elem, index) => {
-    //         return (
-    //             <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
-    //                 <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem.tag_name}</Text>
-    //             </View>
-    //         )
-    //     });
-    //     return array;
-        // let tagLen = tags.length;
-        // if (tagLen <= 3) {
-        //     // one row
-        //     return (
-        //         <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}>
-        //             {tags.map((elem, index) => {
-        //                 return (
-        //                     <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
-        //                         <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem}</Text>
-        //                     </View>
-        //                 )
-        //             })}
-        //         </View>
-        //     )
-        // } else if (tagLen > 3 && tagLen <= 6) {
-        //     // two rows
-        //     return (
-        //         for (int i = 0; i < )
-        //         <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}
-        //     )
-        // } else if (tagLen > 6 && tagLen <= 9) {
-        //     // three rows, max 3 in a row
-        // } else if (tagLen > 9 && tagLen <= 12) {
-        //     // three rows, max 4 in a row
-        // } else {
-        //     // tag length should not exceed 12
-        //     return <Text>标签太多啦！</Text>;
-        // }
-    // }
 
     render() {
         return (

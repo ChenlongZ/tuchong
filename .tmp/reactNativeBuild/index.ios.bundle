@@ -75414,7 +75414,7 @@ _react2.default.createElement(_reactNative.Image,{source:require(479 /* ./resour
 
 this._generateImages());
 
-}}]);return TaggedView;}(_react.Component);TaggedView.propTypes={tag:_react2.default.PropTypes.string.isRequired,hot:_react2.default.PropTypes.bool.isRequired};exports.default=TaggedView;
+}}]);return TaggedView;}(_react.Component);TaggedView.propTypes={tag:_react2.default.PropTypes.string.isRequired,hot:_react2.default.PropTypes.bool};exports.default=TaggedView;
 
 
 var styles=_reactNative.StyleSheet.create({
@@ -75940,6 +75940,8 @@ var _reactNative=require(42 /* react-native */);
 
 
 
+
+
 var _reactNativeRouterFlux=require(401 /* react-native-router-flux */);
 var _reactNativeSwiper=require(481 /* react-native-swiper */);var _reactNativeSwiper2=babelHelpers.interopRequireDefault(_reactNativeSwiper);
 var _reactNativePhotoView=require(483 /* react-native-photo-view */);var _reactNativePhotoView2=babelHelpers.interopRequireDefault(_reactNativePhotoView);
@@ -76016,6 +76018,20 @@ alert(error);
 
 {var _this3=this;
 var photos=this.state.photos;
+var tagsView=this.state.tags.map(function(elem,index){
+return(
+_react2.default.createElement(_reactNative.TouchableHighlight,{key:index,
+onPress:function onPress(){return _reactNativeRouterFlux.Actions.taggedView({title:elem.tag_name,tag:elem.tag_name,hot:true});},
+style:{
+justifyContent:'center',alignItems:'center',
+height:20,
+margin:5,
+paddingLeft:10,paddingRight:10,
+borderWidth:1,borderRadius:3,borderColor:"#3e86f9",height:30}},
+_react2.default.createElement(_reactNative.Text,{style:{fontSize:12,fontWeight:'500',color:"#3e86f9",textAlign:'center'}},elem.tag_name)));
+
+
+});
 return(
 photos.map(function(elem,index,array){
 var imgWidth=elem.ar>PHOTOVIEW_AR?PHOTOVIEW_HEIGHT/elem.ar:PHOTOVIEW_WIDTH;
@@ -76034,7 +76050,100 @@ onTap:function onTap(){
 _this3.popupDialog.show();
 }}),
 
-_this3._renderPopup(elem.exif)));
+_react2.default.createElement(_reactNativePopupDialog2.default,{style:{
+flexDirection:'column'},
+
+
+dialogAnimation:new _reactNativePopupDialog.ScaleAnimation(),
+width:POPUP_W,
+height:POPUP_H,
+ref:function ref(popupDialog){
+_this3.popupDialog=popupDialog;
+}},
+_react2.default.createElement(_reactNative.View,{style:{
+flex:1,
+flexDirection:'column',
+justifyContent:'center',
+alignItems:'center',
+paddingTop:15}},
+
+_react2.default.createElement(_reactNative.Image,{style:{
+padding:10,
+alignSelf:'center',
+borderWidth:1,
+borderRadius:20,
+resizeMode:'cover'},
+
+source:{uri:_this3.state.author.authorThumbnail,height:38,width:38}}),
+_react2.default.createElement(_reactNative.Text,{style:{
+padding:15,
+fontSize:13,
+fontWeight:'900',
+color:'black'}},
+_this3.state.author.authorName),
+_react2.default.createElement(_reactNative.View,{style:{
+marginTop:5,
+backgroundColor:'#AAA',
+height:1,
+width:POPUP_W-20}})),
+
+
+elem.exif.camera!==undefined||elem.exif.lens!==undefined||elem.exif.exposure!==undefined?
+_react2.default.createElement(_reactNative.View,{style:{
+flex:1,
+flexDirection:'column',
+justifyContent:'center',
+alignItems:'center'}},
+
+elem.exif.camera!==undefined?_react2.default.createElement(_reactNative.View,{style:{
+flex:1,
+flexDirection:'row',
+justifyContent:'center',
+alignItems:'center'}},
+
+_react2.default.createElement(_FontAwesome2.default,{name:'camera',size:12,color:'gray'}),
+_react2.default.createElement(_reactNative.Text,{style:{fontSize:12,color:"gray",fontWeight:"500"}},'   ',elem.exif.camera.name)):
+null,
+elem.exif.lens!==undefined?_react2.default.createElement(_reactNative.View,{style:{
+flex:1,
+flexDirection:'row',
+justifyContent:'center',
+alignItems:'center'}},
+
+_react2.default.createElement(_Ionicons2.default,{name:'md-aperture',size:14,color:'gray'}),
+_react2.default.createElement(_reactNative.Text,{style:{fontSize:12,color:"gray",fontWeight:"500"}},'   ',elem.exif.lens.name)):
+null,
+elem.exif.exposure!==undefined?_react2.default.createElement(_reactNative.View,{style:{
+flex:1,
+flexDirection:'row',
+justifyContent:'center',
+alignItems:'center'}},
+
+elem.exif.exposure.split(",").map(function(elem,index){
+return _react2.default.createElement(_reactNative.Text,{key:index,
+style:{fontSize:12,color:"gray",fontWeight:"500"}},elem);
+})):
+null,
+_react2.default.createElement(_reactNative.View,{style:{
+backgroundColor:'#AAA',
+height:1,
+width:POPUP_W-20}})):
+
+null,
+_this3.state.tags!==undefined?_react2.default.createElement(_reactNative.ScrollView,{style:{flex:1}},
+_react2.default.createElement(_reactNative.View,{style:{
+flexDirection:'row',
+alignItems:'center',
+justifyContent:'center',
+flexWrap:'wrap',
+paddingTop:10,
+paddingBottom:10,
+paddingLeft:15,
+paddingRight:15}},
+
+tagsView)):
+null)));
+
 
 
 }));
@@ -76046,8 +76155,15 @@ return null;
 }
 var tagsView=this.state.tags.map(function(elem,index){
 return(
-_react2.default.createElement(_reactNative.View,{key:index,style:{borderWidth:1,borderRadius:5,borderColor:"#3e86f9",margin:2}},
-_react2.default.createElement(_reactNative.Text,{style:{fontSize:12,color:"#3e86f9",textAlign:'center'}},elem.tag_name)));
+_react2.default.createElement(_reactNative.TouchableHighlight,{key:index,
+onPress:function onPress(){return _reactNativeRouterFlux.Actions.taggedView({title:elem.tag_name,tag:elem.tag_name,hot:true});},
+style:{
+justifyContent:'center',alignItems:'center',
+height:20,
+margin:5,
+paddingLeft:10,paddingRight:10,
+borderWidth:1,borderRadius:3,borderColor:"#3e86f9",height:30}},
+_react2.default.createElement(_reactNative.Text,{style:{fontSize:12,fontWeight:'500',color:"#3e86f9",textAlign:'center'}},elem.tag_name)));
 
 
 });
@@ -76132,58 +76248,22 @@ height:1,
 width:POPUP_W-20}})):
 
 null,
-this.state.tags!==undefined?_react2.default.createElement(_reactNative.View,{style:{
-flex:1,
+this.state.tags!==undefined?_react2.default.createElement(_reactNative.ScrollView,{style:{flex:1}},
+_react2.default.createElement(_reactNative.View,{style:{
+flexDirection:'row',
+alignItems:'center',
+justifyContent:'center',
 flexWrap:'wrap',
 paddingTop:10,
 paddingBottom:10,
-paddingLeft:20,
-paddingRight:20}},
+paddingLeft:15,
+paddingRight:15}},
 
-tagsView):
+tagsView)):
 null));
 
 
 }},{key:'render',value:function render()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 {
 return(

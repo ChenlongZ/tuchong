@@ -39,7 +39,7 @@ export default class TaggedView extends Component {
 
     static propTypes = {
         tag: React.PropTypes.string.isRequired,
-        hot: React.PropTypes.bool.isRequired,
+        hot: React.PropTypes.bool,
     }
 
     constructor(props) {
