@@ -112,11 +112,17 @@ export default class extends Component {
         if (this.state.author === undefined) {
             return null;
         }
+        let tagsView = this.state.tags.map((elem, index) => {
+            return (
+                <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
+                    <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem.tag_name}</Text>
+                </View>
+            )
+        });
         return (
             <PopupDialog style={{
                 flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
+
             }}
                          dialogAnimation={new ScaleAnimation()}
                          width={POPUP_W}
@@ -140,12 +146,13 @@ export default class extends Component {
                     }}
                            source={{uri: this.state.author.authorThumbnail, height: 38, width: 38}}/>
                     <Text style={{
-                        padding: 12,
+                        padding: 15,
                         fontSize: 13,
                         fontWeight: '900',
                         color: 'black',
                     }}>{this.state.author.authorName}</Text>
                     <View style={{
+                        marginTop: 5,
                         backgroundColor: '#AAA',
                         height: 1,
                         width: POPUP_W - 20
@@ -195,43 +202,56 @@ export default class extends Component {
                     </View> : null }
                 {this.state.tags !== undefined ? <View style={{
                     flex: 1,
+                    flexWrap: 'wrap',
                     paddingTop: 10,
                     paddingBottom: 10,
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    paddingLeft: 20,
+                    paddingRight: 20,
                 }}>
-                    {this._generateTagViews(this.state.tags)}
+                    {tagsView}
                 </View> : null}
             </PopupDialog>
         )
     }
 
-    _generateTagViews(tags) {
-        let tagLen = tags.length;
-        if (tagLen <= 3) {
-            // one row
-            return (
-                <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}>
-                    {tags.map((elem, index) => {
-                        return (
-                            <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
-                                <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem}</Text>
-                            </View>
-                        )
-                    })}
-                </View>
-            )
-        } else if (tagLen > 3 && tagLen <= 6) {
-            // two rows
-        } else if (tagLen > 6 && tagLen <= 9) {
-            // three rows, max 3 in a row
-        } else if (tagLen > 9 && tagLen <= 12) {
-            // three rows, max 4 in a row
-        } else {
-            // tag length should not exceed 12
-            return <Text>标签太多啦！</Text>;
-        }
-    }
+    // _generateTagViews() {
+    //     var array = this.state.tags.map((elem, index) => {
+    //         return (
+    //             <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
+    //                 <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem.tag_name}</Text>
+    //             </View>
+    //         )
+    //     });
+    //     return array;
+        // let tagLen = tags.length;
+        // if (tagLen <= 3) {
+        //     // one row
+        //     return (
+        //         <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}>
+        //             {tags.map((elem, index) => {
+        //                 return (
+        //                     <View key={index} style={{borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9", margin: 2}}>
+        //                         <Text style={{fontSize: 12, color: "#3e86f9", textAlign: 'center'}}>{elem}</Text>
+        //                     </View>
+        //                 )
+        //             })}
+        //         </View>
+        //     )
+        // } else if (tagLen > 3 && tagLen <= 6) {
+        //     // two rows
+        //     return (
+        //         for (int i = 0; i < )
+        //         <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}
+        //     )
+        // } else if (tagLen > 6 && tagLen <= 9) {
+        //     // three rows, max 3 in a row
+        // } else if (tagLen > 9 && tagLen <= 12) {
+        //     // three rows, max 4 in a row
+        // } else {
+        //     // tag length should not exceed 12
+        //     return <Text>标签太多啦！</Text>;
+        // }
+    // }
 
     render() {
         return (
