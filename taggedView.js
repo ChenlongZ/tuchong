@@ -119,10 +119,10 @@ export default class TaggedView extends Component {
             });
     }
 
-    _generateRowItems(data) {
+    _generateRowItems(data, isLeft) {
         return (
             <TouchableHighlight
-                style={{paddingRight: paddingLeftRight / 2}}
+                style={isLeft ? {paddingRight: paddingLeftRight / 2} : {paddingLeft: paddingLeftRight / 2}}
                 onPress={() => Actions.photoView({title: data.title, propData: data})}>
                 <View style={{width: data.Width, height: data.Height}}>
                     <Image source={{
@@ -165,8 +165,8 @@ export default class TaggedView extends Component {
                                   paddingLeft: paddingLeftRight,
                                   paddingRight: paddingLeftRight,
                               }}>
-                                  {this._generateRowItems(rowData.first)}
-                                  {this._generateRowItems(rowData.second)}
+                                  {this._generateRowItems(rowData.first, true)}
+                                  {this._generateRowItems(rowData.second, false)}
                               </View>
                           )
                       }}

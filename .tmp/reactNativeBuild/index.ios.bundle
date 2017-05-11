@@ -75312,10 +75312,10 @@ alert("Hahaha, 404 not found!");
 });
 }},{key:'_generateRowItems',value:function _generateRowItems(
 
-data){
+data,isLeft){
 return(
 _react2.default.createElement(_reactNative.TouchableHighlight,{
-style:{paddingRight:paddingLeftRight/2},
+style:isLeft?{paddingRight:paddingLeftRight/2}:{paddingLeft:paddingLeftRight/2},
 onPress:function onPress(){return _reactNativeRouterFlux.Actions.photoView({title:data.title,propData:data});}},
 _react2.default.createElement(_reactNative.View,{style:{width:data.Width,height:data.Height}},
 _react2.default.createElement(_reactNative.Image,{source:{
@@ -75358,8 +75358,8 @@ flexDirection:'row',
 paddingLeft:paddingLeftRight,
 paddingRight:paddingLeftRight}},
 
-_this3._generateRowItems(rowData.first),
-_this3._generateRowItems(rowData.second)));
+_this3._generateRowItems(rowData.first,true),
+_this3._generateRowItems(rowData.second,false)));
 
 
 },
@@ -75928,7 +75928,7 @@ __d(/* tuchong/resources/menu_burger.png */function(global, require, module, exp
 }, 477, null, "tuchong/resources/menu_burger.png");
 __d(/* tuchong/resources/back_chevron.png */function(global, require, module, exports) {module.exports = require(171 /* react-native/Libraries/Image/AssetRegistry */).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/resources","width":26,"height":42,"scales":[1],"hash":"fb13fafd1da1ad19e708c53cfad2e514","name":"back_chevron","type":"png"});
 }, 478, null, "tuchong/resources/back_chevron.png");
-__d(/* tuchong/resources/animal.gif */function(global, require, module, exports) {module.exports = require(171 /* react-native/Libraries/Image/AssetRegistry */).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/resources","width":64,"height":64,"scales":[1],"hash":"871b7f7f496ece1a81f0f9525a637886","name":"animal","type":"gif"});
+__d(/* tuchong/resources/animal.gif */function(global, require, module, exports) {module.exports = require(171 /* react-native/Libraries/Image/AssetRegistry */).registerAsset({"__packager_asset":true,"httpServerLocation":"/assets/resources","width":198,"height":198,"scales":[1],"hash":"616b9077caf56599bb8edc9228fc4b41","name":"animal","type":"gif"});
 }, 479, null, "tuchong/resources/animal.gif");
 __d(/* tuchong/photoView.js */function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
 var _reactNative=require(42 /* react-native */);
@@ -76052,7 +76052,7 @@ _react2.default.createElement(_reactNative.TouchableHighlight,{key:index,
 onPress:function onPress(){return _reactNativeRouterFlux.Actions.taggedView({title:elem.tag_name,tag:elem.tag_name,hot:true});},
 style:{
 justifyContent:'center',alignItems:'center',
-height:18,
+height:20,
 margin:5,
 paddingLeft:8,paddingRight:8,
 borderWidth:1,borderRadius:5,borderColor:"#3e86f9"}},
