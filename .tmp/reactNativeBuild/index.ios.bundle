@@ -1626,10 +1626,12 @@ _react2.default.createElement(_reactNativeRouterFlux.Scene,{
 key:'home',
 component:_home2.default,
 title:'\u56FE\u866B',
+hideNavBar:true,
 initial:true}),
 _react2.default.createElement(_reactNativeRouterFlux.Scene,{
 key:'taggedView',
 component:_taggedView2.default,
+hideNavBar:false,
 navigationBarStyle:{
 backgroundColor:'rgba(0, 0, 0, 0.2)',
 borderBottomWidth:0},
@@ -74030,7 +74032,6 @@ renderItem:_this2.renderRow}))));
 
 return(
 _react2.default.createElement(_reactNative.ScrollView,{style:{flex:1}},
-_react2.default.createElement(_reactNative.View,{style:styles.occupySpace}),
 _react2.default.createElement(_reactNative.View,{style:styles.topSection},
 _react2.default.createElement(_reactNative.Image,{style:styles.titleImage,
 source:require(470 /* ./resources/tuchong.jpg */)})),
@@ -74048,9 +74049,6 @@ source:require(471 /* ./resources/separator.png */)}))));
 
 
 var styles=_reactNative.StyleSheet.create({
-occupySpace:{
-height:_reactNative.Platform.OS==='ios'?64:54},
-
 topSection:{
 height:175},
 
@@ -75956,7 +75954,7 @@ var PHOTOVIEW_WIDTH=DEVICE_W;
 var PHOTOVIEW_HEIGHT=DEVICE_H-(_reactNative.Platform.OS=='ios'?64:54)-BOTTOM_BAR_HEIGHT;
 var PHOTOVIEW_AR=PHOTOVIEW_HEIGHT/PHOTOVIEW_WIDTH;
 var POPUP_W=DEVICE_W-75;
-var POPUP_H=300;
+var POPUP_H=330;
 var POPUP_TOP=(DEVICE_H-POPUP_H)/2;
 var POPUP_LEFT=(DEVICE_W-POPUP_W)/2;
 
@@ -76150,7 +76148,7 @@ height:1,
 width:POPUP_W-20}})):
 
 null,
-tags!==undefined?_react2.default.createElement(_reactNative.ScrollView,{style:{flex:1,paddingBottom:10}},
+tags!==undefined?_react2.default.createElement(_reactNative.ScrollView,{style:{flex:1}},
 _react2.default.createElement(_reactNative.View,{style:{
 flexDirection:'row',
 alignItems:'center',

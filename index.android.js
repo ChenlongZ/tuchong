@@ -34,10 +34,12 @@ class tuchong extends Component {
                         key='home'
                         component={ Home }
                         title='图虫'
+                        hideNavBar={true}
                         initial={ true }/>
                     <Scene
                         key='taggedView'
                         component={ TaggedView }
+                        hideNavBar={false}
                         navigationBarStyle={{
                             backgroundColor: 'rgba(0, 0, 0, 0.2)',
                             borderBottomWidth: 0,

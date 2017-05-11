@@ -114,7 +114,6 @@ export default class Home extends Component {
 
         return (
             <ScrollView style={{flex: 1}}>
-                <View style={styles.occupySpace} />
                 <View style={styles.topSection}>
                     <Image style={styles.titleImage}
                         source={require('./resources/tuchong.jpg')} />
@@ -132,9 +131,6 @@ export default class Home extends Component {
 }
 
 const styles = StyleSheet.create({
-    occupySpace: {
-        height: (Platform.OS === 'ios') ? 64 : 54,
-    },
     topSection: {
         height: 175,
     },
