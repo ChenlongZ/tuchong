@@ -122,8 +122,8 @@ export default class extends Component {
                     justifyContent: 'center', alignItems: 'center',
                     height: 20,
                     margin: 5,
-                    paddingLeft: 10, paddingRight: 10,
-                    borderWidth: 1, borderRadius: 3, borderColor: "#3e86f9", height: 30}}>
+                    paddingLeft: 8, paddingRight: 8,
+                    borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9"}}>
                     <Text style={{fontSize: 12, fontWeight: '500', color: "#3e86f9", textAlign: 'center'}}>{elem.tag_name}</Text>
                 </TouchableHighlight>
             )
