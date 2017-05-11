@@ -117,21 +117,30 @@ export default class extends Component {
         let tagsView = tags.map((elem, index) => {
             return (
                 <TouchableHighlight key={index}
-                                    onPress={() => Actions.taggedView({title: elem.tag_name, tag: elem.tag_name, hot: true})}
+                                    onPress={() => Actions.taggedView({
+                                        title: elem.tag_name,
+                                        tag: elem.tag_name,
+                                        hot: true
+                                    })}
                                     style={{
-                    justifyContent: 'center', alignItems: 'center',
-                    height: 20,
-                    margin: 5,
-                    paddingLeft: 8, paddingRight: 8,
-                    borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9"}}>
-                    <Text style={{fontSize: 12, fontWeight: '500', color: "#3e86f9", textAlign: 'center'}}>{elem.tag_name}</Text>
+                                        justifyContent: 'center', alignItems: 'center',
+                                        height: 20,
+                                        margin: 5,
+                                        paddingLeft: 8, paddingRight: 8,
+                                        borderWidth: 1, borderRadius: 5, borderColor: "#3e86f9"
+                                    }}>
+                    <Text style={{
+                        fontSize: 12,
+                        fontWeight: '500',
+                        color: "#3e86f9",
+                        textAlign: 'center'
+                    }}>{elem.tag_name}</Text>
                 </TouchableHighlight>
             )
         });
         return (
             <PopupDialog style={{
                 flexDirection: 'column',
-
             }}
                          dialogAnimation={new ScaleAnimation()}
                          width={POPUP_W}
@@ -211,17 +220,18 @@ export default class extends Component {
                     </View> : null }
                 {tags !== undefined ? <ScrollView style={{flex: 1}}>
                     <View style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexWrap: 'wrap',
-                    paddingTop: 10,
-                    paddingBottom: 10,
-                    paddingLeft: 15,
-                    paddingRight: 15,
-                }}>
-                    {tagsView}
-                </View></ScrollView> : null}
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexWrap: 'wrap',
+                        paddingTop: 10,
+                        paddingBottom: 10,
+                        paddingLeft: 15,
+                        paddingRight: 15,
+                    }}>
+                        {tagsView}
+                    </View>
+                </ScrollView> : null}
             </PopupDialog>
         )
     }
