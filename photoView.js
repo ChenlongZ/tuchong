@@ -28,6 +28,8 @@ const POPUP_H = 300;
 const POPUP_TOP = (DEVICE_H - POPUP_H) / 2;
 const POPUP_LEFT = (DEVICE_W - POPUP_W) / 2;
 
+const popupArray = [];
+
 export default class extends Component {
 
     static propTypes = {
@@ -39,11 +41,11 @@ export default class extends Component {
         this._fetchInfo.bind(this);
         this._generatePhotos.bind(this);
         this._renderPopup.bind(this);
-        this.popupDialog = undefined;
         this.state = {
             photos: [],
             author: undefined,
             tags: undefined,
+            showPopup: false,
         }
     }
 
@@ -55,15 +57,6 @@ export default class extends Component {
         fetch(this.props.propData.postUrl)
             .then((response) => response.json())
             .then((responseJson) => {
-                let photoInfo = responseJson.images.map((elem, index, array) => {
-                    return {
-                        url: "https://photo.tuchong.com/" + elem.user_id + "/f/" + elem.img_id + ".jpg",
-                        height: elem.height,
-                        width: elem.width,
-                        ar: parseFloat(elem.height) / parseFloat(elem.width),
-                        exif: elem.exif,
-                    };
-                });
                 let authorInfo = {
                     comments: this.props.propData.comments,
                     likes: this.props.propData.likes,
@@ -73,6 +66,16 @@ export default class extends Component {
                     authorOthers: responseJson.post.author,
                 };
                 let tags = responseJson.post.tags;
+                let photoInfo = responseJson.images.map((elem, index, array) => {
+                    return {
+                        url: "https://photo.tuchong.com/" + elem.user_id + "/f/" + elem.img_id + ".jpg",
+                        height: elem.height,
+                        width: elem.width,
+                        ar: parseFloat(elem.height) / parseFloat(elem.width),
+                        exif: elem.exif,
+                        popUpView: this._renderPopup(elem.exif, authorInfo, tags, index),
+                    };
+                });
                 this.setState({
                     photos: photoInfo,
                     author: authorInfo,
@@ -101,20 +104,17 @@ export default class extends Component {
                                 require('./resources/animal.gif')
                             }
                             onTap={() => {
-                                this.popupDialog.show();
+                                popupArray[index].show();
                             }}
                         />
-                        {this._renderPopup(elem.exif)}
+                        {elem.popUpView}
                     </View>
                 );
             }));
     }
 
-    _renderPopup(exif) {
-        if (this.state.author === undefined) {
-            return null;
-        }
-        let tagsView = this.state.tags.map((elem, index) => {
+    _renderPopup(exif, author, tags, index) {
+        let tagsView = tags.map((elem, index) => {
             return (
                 <TouchableHighlight key={index}
                                     onPress={() => Actions.taggedView({title: elem.tag_name, tag: elem.tag_name, hot: true})}
@@ -137,7 +137,7 @@ export default class extends Component {
                          width={POPUP_W}
                          height={POPUP_H}
                          ref={(popupDialog) => {
-                             this.popupDialog = popupDialog;
+                             popupArray[index] = popupDialog;
                          }}>
                 <View style={{
                     flex: 1,
@@ -153,13 +153,13 @@ export default class extends Component {
                         borderRadius: 20,
                         resizeMode: 'cover'
                     }}
-                           source={{uri: this.state.author.authorThumbnail, height: 38, width: 38}}/>
+                           source={{uri: author.authorThumbnail, height: 38, width: 38}}/>
                     <Text style={{
                         padding: 15,
                         fontSize: 13,
                         fontWeight: '900',
                         color: 'black',
-                    }}>{this.state.author.authorName}</Text>
+                    }}>{author.authorName}</Text>
                     <View style={{
                         marginTop: 5,
                         backgroundColor: '#AAA',
@@ -209,7 +209,7 @@ export default class extends Component {
                             width: POPUP_W - 20
                         }}/>
                     </View> : null }
-                {this.state.tags !== undefined ? <ScrollView style={{flex: 1}}>
+                {tags !== undefined ? <ScrollView style={{flex: 1}}>
                     <View style={{
                     flexDirection: 'row',
                     alignItems: 'center',
