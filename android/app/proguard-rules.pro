@@ -50,6 +50,9 @@
 
 -dontwarn com.facebook.react.**
 
+# GIF support
+-keep class com.facebook.imagepipeline.animated.factory.AnimatedFactoryImpl { public AnimatedFactoryImpl(com.facebook.imagepipeline.bitmaps.PlatformBitmapFactory, com.facebook.imagepipeline.core.ExecutorSupplier); }
+
 # okhttp
 
 -keepattributes Signature
