@@ -132,17 +132,12 @@ export default class Home extends Component {
 
 const styles = StyleSheet.create({
     topSection: {
-        height: 175,
+        height: 250,
     },
     titleImage: {
-        height: 175,
+        height: 250,
         alignSelf: 'center',
         resizeMode: 'contain',
-        ...Platform.select({
-            android: {
-                resizeMethod: 'resize',
-            }
-        }),
     },
     mainSection: {
     },
