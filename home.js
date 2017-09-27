@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     titleImage: {
         height: 175,
         alignSelf: 'center',
-        resizeMode: 'stretch',
+        resizeMode: 'contain',
     },
     mainSection: {
     },
