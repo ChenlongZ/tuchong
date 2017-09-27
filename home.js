@@ -138,6 +138,11 @@ const styles = StyleSheet.create({
         height: 175,
         alignSelf: 'center',
         resizeMode: 'contain',
+        ...Platform.select({
+            android: {
+                resizeMethod: 'resize',
+            }
+        }),
     },
     mainSection: {
     },
