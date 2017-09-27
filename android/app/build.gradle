@@ -101,9 +101,9 @@ android {
     signingConfigs {
             release {
                     storeFile file("my-release-key.keystore")
-                    storePassword "zclcoco"
+                    storePassword "9297zclcoconine"
                     keyAlias "my-key-alias"
-                    keyPassword "zclcoco"
+                    keyPassword "9297zclcoconine"
             }
     }
 
